@@ -1,0 +1,133 @@
+{% extends 'reservation/base.html' %}
+
+{% block style %}
+    <style>
+        .calender-container {
+            height: 80vh;
+        }
+
+        .fc-event {
+            cursor: pointer
+        }
+    </style>
+{% endblock style %}
+
+{% block navbar %}
+    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="carDropdown" role="button" data-toggle="dropdown"
+           aria-haspopup="true" aria-expanded="false">
+            {{ current_car.name }}
+        </a>
+        <div class="dropdown-menu" aria-labelledby="carDropdown">
+            {% for car in cars %}
+                {% if car == current_car %}
+                    <b><a class="dropdown-item" href="{% url 'reservation:calendar_car' car.id %}">
+                        {{ car.name }}
+                    </a></b>
+                {% else %}
+                    <a class="dropdown-item" href="{% url 'reservation:calendar_car' car.id %}">
+                        {{ car.name }}
+                    </a>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </li>
+{% endblock navbar %}
+
+{% block body %}
+    <div class="row justify-content-between">
+        <div class="col">
+            <h1>{{ current_car.name }}
+                <a class="btn btn-secondary" href="{% url 'reservation:calendar_car_config' current_car.id %}">
+                    <i class="fas fa-sliders-h"></i>
+                </a>
+            </h1>
+        </div>
+        <div class="float-right">
+            <button class="btn btn-primary" id="prev-week" onclick="calendar.prev()">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <button class="btn btn-primary" id="next-week" onclick="calendar.next()">
+                <i class="fas fa-chevron-right"></i>
+            </button>
+        </div>
+    </div>
+    <div class="calender-container">
+        <div id="calendar"></div>
+    </div>
+{% endblock body %}
+
+{% block script %}
+    <script>
+
+        let currentCarId = {{ current_car.id }};
+        let events = [];
+        $.ajax({
+            dataType: 'json',
+            url: '/api/car/' + currentCarId + '/reservations',
+            success: function(result) {
+                events = result
+            },
+            async: false
+        });
+
+        let calendarEvents = [];
+        for (let i in events) {
+            let e = events[i];
+            let eventObject = {
+                id: e.id,
+                start: new Date(e.start_time),
+                end: new Date(e.end_time),
+                url: '/reservation/' + e.id
+            };
+            if (e.is_charging_reservation) {
+                eventObject.title = 'Charging';
+                eventObject.backgroundColor = '#28a745';
+            } else {
+                eventObject.title = capitalizeFirstLetter(e.owner.username) + ' · ' + capitalizeFirstLetter(e.location);
+            }
+            calendarEvents.push(eventObject);
+        }
+
+        let calendarEl = $("#calendar").get(0);
+        let calendar = new FullCalendar.Calendar(calendarEl, {
+            plugins: ['interaction', 'timeGrid', 'bootstrap'],
+            defaultView: 'timeGridWeek',
+            themeSystem: 'bootstrap',
+
+            header: {
+                left: '',
+                center: '',
+                right: ''
+            },
+            allDaySlot: false,
+
+            slotLabelFormat: {
+                hour: '2-digit',
+                minute: '2-digit'
+            },
+            eventTimeFormat: {
+                hour: '2-digit',
+                minute: '2-digit'
+            },
+            locale: 'be',
+
+            editable: true,
+            eventStartEditable: false,
+            eventDurationEditable: false,
+
+            events: calendarEvents,
+
+            firstDay: 1,
+
+            dateClick: function (dateClickInfo) {
+                alert(dateClickInfo.date)
+            },
+
+            nowIndicator: true,
+            height: 'parent'
+        });
+        calendar.render()
+    </script>
+{% endblock script %}
+
