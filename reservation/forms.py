@@ -12,4 +12,5 @@ class CarConfigForm(forms.ModelForm):
 class ReservationForm(forms.ModelForm):
     class Meta:
         model = Reservation
-        fields = ()
+        fields = ('description', 'distance', 'location', 'start_time', 'end_time', 'should_be_charged_fully',
+                  'priority')

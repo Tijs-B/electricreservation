@@ -1,13 +1,21 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
 
-from reservation.models import Reservation, Car
+from reservation.models import Reservation, Car, Profile
+
+
+class ProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Profile
+        fields = ('calendar_color',)
 
 
 class UserSerializer(serializers.ModelSerializer):
+    profile = ProfileSerializer()
+
     class Meta:
         model = User
-        fields = ('id', 'username', 'email', 'first_name', 'last_name')
+        fields = ('id', 'username', 'email', 'first_name', 'last_name', 'profile')
 
 
 class CarSerializer(serializers.ModelSerializer):
@@ -18,7 +26,6 @@ class CarSerializer(serializers.ModelSerializer):
 
 class ReservationSerializer(serializers.ModelSerializer):
     owner = UserSerializer()
-
 
     class Meta:
         model = Reservation

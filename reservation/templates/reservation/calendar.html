@@ -82,8 +82,11 @@
             };
             if (e.is_charging_reservation) {
                 eventObject.title = 'Charging';
-                eventObject.backgroundColor = '#28a745';
+                eventObject.backgroundColor = '#868e96';
+                eventObject.borderColor = '#868e96';
             } else {
+                eventObject.backgroundColor = e.owner.profile.calendar_color;
+                eventObject.borderColor = e.owner.profile.calendar_color;
                 eventObject.title = capitalizeFirstLetter(e.owner.username) + ' · ' + capitalizeFirstLetter(e.location);
             }
             calendarEvents.push(eventObject);

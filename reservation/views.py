@@ -8,7 +8,7 @@ from django.views.generic import FormView, UpdateView, DetailView
 from rest_framework.views import APIView
 from rest_framework import generics
 
-from reservation.forms import CarConfigForm
+from reservation.forms import CarConfigForm, ReservationForm
 from reservation.models import Car, Reservation
 from reservation.serializers import CarSerializer, ReservationSerializer
 
@@ -58,7 +58,7 @@ class CarConfig(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     form_class = CarConfigForm
 
     def get_success_url(self):
-        return reverse('reservation:calendar_car', kwargs={'car_id':self.kwargs['pk']})
+        return reverse('reservation:calendar_car', kwargs={'car_id': self.kwargs['pk']})
 
     def test_func(self):
         return self.request.user.car_set.filter(pk=self.kwargs['pk']).exists()
@@ -68,12 +68,18 @@ class CarConfig(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
 
 class ReservationDetail(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    template_name = 'reservation/reservation_detail.html'
+    form_class = ReservationForm
+
     def test_func(self):
         car_id = self.get_object().car.id
         return self.request.user.car_set.filter(pk=car_id).exists()
 
-    template_name = 'reservation/reservation_detail.html'
-    form_class =
+    def get_queryset(self):
+        return Reservation.objects.all()
+
+    def get_success_url(self):
+        return reverse('reservation:calendar_car', kwargs={'car_id': self.get_object().car.id})
 
 
 class APIReservationsList(LoginRequiredMixin, generics.ListAPIView):
