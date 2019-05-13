@@ -1,6 +1,8 @@
 {% extends 'reservation/base.html' %}
 
-{% block style %}
+{% load static %}
+
+{% block head %}
     <style>
         .calender-container {
             height: 80vh;
@@ -10,7 +12,13 @@
             cursor: pointer
         }
     </style>
-{% endblock style %}
+
+    <!-- FullCalendar -->
+    <link rel="stylesheet" href="{% static 'reservation/fullcalendar/core/main.min.css' %}">
+    <link rel="stylesheet" href="{% static 'reservation/fullcalendar/daygrid/main.min.css' %}">
+    <link rel="stylesheet" href="{% static 'reservation/fullcalendar/timegrid/main.min.css' %}">
+    <link rel="stylesheet" href="{% static 'reservation/fullcalendar/bootstrap/main.min.css' %}">
+{% endblock head %}
 
 {% block navbar %}
     <li class="nav-item dropdown">
@@ -58,40 +66,15 @@
 {% endblock body %}
 
 {% block script %}
+    <script src="{% static 'reservation/fullcalendar/core/main.min.js' %}"></script>
+    <script src="{% static 'reservation/fullcalendar/interaction/main.min.js' %}"></script>
+    <script src="{% static 'reservation/fullcalendar/daygrid/main.min.js' %}"></script>
+    <script src="{% static 'reservation/fullcalendar/timegrid/main.min.js' %}"></script>
+    <script src="{% static 'reservation/fullcalendar/bootstrap/main.min.js' %}"></script>
+
     <script>
 
         let currentCarId = {{ current_car.id }};
-        let events = [];
-        $.ajax({
-            dataType: 'json',
-            url: '/api/car/' + currentCarId + '/reservations',
-            success: function(result) {
-                events = result
-            },
-            async: false
-        });
-
-        let calendarEvents = [];
-        for (let i in events) {
-            let e = events[i];
-            let eventObject = {
-                id: e.id,
-                start: new Date(e.start_time),
-                end: new Date(e.end_time),
-                url: '/reservation/' + e.id
-            };
-            if (e.is_charging_reservation) {
-                eventObject.title = 'Charging';
-                eventObject.backgroundColor = '#868e96';
-                eventObject.borderColor = '#868e96';
-            } else {
-                eventObject.backgroundColor = e.owner.profile.calendar_color;
-                eventObject.borderColor = e.owner.profile.calendar_color;
-                eventObject.title = capitalizeFirstLetter(e.owner.username) + ' · ' + capitalizeFirstLetter(e.location);
-            }
-            calendarEvents.push(eventObject);
-        }
-
         let calendarEl = $("#calendar").get(0);
         let calendar = new FullCalendar.Calendar(calendarEl, {
             plugins: ['interaction', 'timeGrid', 'bootstrap'],
@@ -119,18 +102,79 @@
             eventStartEditable: false,
             eventDurationEditable: false,
 
-            events: calendarEvents,
-
             firstDay: 1,
 
             dateClick: function (dateClickInfo) {
-                alert(dateClickInfo.date)
+                window.open(
+                    '/car/' + currentCarId + '/reservation/add?time=' + (dateClickInfo.date.getTime() / 1000),
+                    "_self"
+                )
             },
 
             nowIndicator: true,
-            height: 'parent'
-        });
-        calendar.render()
+            height: 'parent',
+
+            eventSources: [
+                function (info, successCallback, failureCallback) {
+                    $.ajax({
+                        dataType: 'json',
+                        type: 'get',
+                        url: '/api/car/' + currentCarId + '/reservations/',
+                        data: {start: info.startStr, end: info.endStr},
+                        error: function (xhr) {
+                            failureCallback(xhr);
+                        },
+                        success: function (events) {
+                            let calendarEvents = [];
+                            for (let i in events) {
+                                let e = events[i];
+                                let eventObject = {
+                                    id: e.id,
+                                    start: new Date(e.start_time),
+                                    end: new Date(e.end_time),
+                                    url: '/reservation/' + e.id
+                                };
+                                eventObject.backgroundColor = e.owner.profile.calendar_color;
+                                eventObject.borderColor = e.owner.profile.calendar_color;
+                                eventObject.title = capitalizeFirstLetter(e.owner.username) + '\n';
+                                eventObject.title += capitalizeFirstLetter(e.location) + ' · ' + e.distance + ' km \n';
+                                calendarEvents.push(eventObject);
+                            }
+                            successCallback(calendarEvents);
+                        }
+                    });
+                }, function (info, successCallback, failureCallback) {
+                    $.ajax({
+                        dataType: 'json',
+                        type: 'get',
+                        url: '/api/car/' + currentCarId + '/charging_reservations/',
+                        data: {start: info.startStr, end: info.endStr},
+                        error: function (xhr) {
+                            failureCallback(xhr);
+                        },
+                        success: function (events) {
+                            let calendarEvents = [];
+                            for (let i in events) {
+                                let e = events[i];
+                                let eventObject = {
+                                    id: e.id,
+                                    start: new Date(e.start_time),
+                                    end: new Date(e.end_time),
+                                    url: '/charging_reservation/' + e.id
+                                };
+                                eventObject.backgroundColor = '#868e96';
+                                eventObject.borderColor = '#868e96';
+                                eventObject.title = 'Charging';
+                                calendarEvents.push(eventObject);
+                            }
+                            successCallback(calendarEvents);
+                        }
+                    });
+                }
+            ]
+        })
+        calendar.render();
+
     </script>
 {% endblock script %}
 

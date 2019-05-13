@@ -7,11 +7,57 @@
         <div class="col-md-8">
             <h1 class="mt-2">Reservation</h1>
 
-            <form method="post">
-                {% csrf_token %}
-                {{ form|crispy }}
-                <button type="submit" class="btn btn-success">Update</button>
-            </form>
+            {% crispy form %}
         </div>
     </div>
 {% endblock body %}
+
+{% block outer_body %}
+    <div class="modal" tabindex="-1" role="dialog" id="confirmDeletionModal">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Confirm Deletion</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to delete this reservation?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <form action="/reservation/{{ object.id }}/delete" method="post">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock outer_body %}
+
+{% block head %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pickerjs@1.2.1/dist/picker.min.css"
+      integrity="sha256-Rbg3v/C7NqiVTWBxzR5iWrm8qv3TLhG7M+r5M8L73TY=" crossorigin="anonymous">
+{% endblock head %}
+
+{% block script %}
+    <script src="https://cdn.jsdelivr.net/npm/pickerjs@1.2.1/dist/picker.min.js"
+            integrity="sha256-yMIn2/F+otyl7rKx6Z49VTlJxrg/wGFBLKqO2eRHkPg=" crossorigin="anonymous"></script>
+
+    <script>
+        let input_start_time = $("#id_start_time").get(0);
+        let input_end_time = $("#id_end_time").get(0);
+
+        let picker = new Picker(input_start_time, {
+            controls: true,
+            headers: true,
+            format: "YYYY-MM-DD hh:mm:ss"
+        });
+
+        function deleteReservation() {
+            $("#confirmDeletionModal").modal('toggle');
+        }
+    </script>
+{% endblock script %}

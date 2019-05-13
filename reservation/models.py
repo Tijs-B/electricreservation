@@ -29,6 +29,8 @@ class Car(models.Model):
     summer_driving_range = models.PositiveIntegerField()
     winter_driving_range = models.PositiveIntegerField()
 
+    charging_time = models.PositiveIntegerField(verbose_name="Charging time (in hours)")
+
     users = models.ManyToManyField(User)
 
     def __str__(self):
@@ -36,17 +38,17 @@ class Car(models.Model):
 
 
 class Reservation(models.Model):
-    owner = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
+    owner = models.ForeignKey(User, on_delete=models.CASCADE)
     car = models.ForeignKey(Car, on_delete=models.CASCADE)
     description = models.CharField(max_length=200, default='', blank=True)
 
-    distance = models.PositiveIntegerField(null=True)
-    location = models.CharField(max_length=100, default='', blank=True)
+    distance = models.PositiveIntegerField()
+    location = models.CharField(max_length=100)
 
     start_time = models.DateTimeField()
     end_time = models.DateTimeField()
 
-    should_be_charged_fully = models.BooleanField(blank=True, default=False)
+    should_be_charged_fully = models.BooleanField(default=False)
 
     PRIORITY_LOW = 'L'
     PRIORITY_MEDIUM = 'M'
@@ -58,10 +60,14 @@ class Reservation(models.Model):
     )
     priority = models.CharField(choices=PRIORITY_CHOICES, max_length=1, default=PRIORITY_LOW, blank=True)
 
-    is_charging_reservation = models.BooleanField(default=False)
+    def __str__(self):
+        return f"Reservation for {self.car} from {self.start_time} to {self.end_time}"
+
+
+class ChargingReservation(models.Model):
+    car = models.ForeignKey(Car, on_delete=models.CASCADE)
+    start_time = models.DateTimeField()
+    end_time = models.DateTimeField()
 
     def __str__(self):
-        if self.is_charging_reservation:
-            return f"Charging reservation for {self.car} from {self.start_time} to {self.end_time}"
-        else:
-            return f"Reservation for {self.car} from {self.start_time} to {self.end_time}"
+        return f"Charging reservation for {self.car} from {self.start_time} to {self.end_time}"
