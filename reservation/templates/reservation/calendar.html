@@ -8,6 +8,11 @@
             height: 80vh;
         }
 
+        .calendar-title {
+            color: black;
+            text-decoration: none !important;
+        }
+
         .fc-event {
             cursor: pointer
         }
@@ -24,11 +29,11 @@
     <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" href="#" id="carDropdown" role="button" data-toggle="dropdown"
            aria-haspopup="true" aria-expanded="false">
-            {{ current_car.name }}
+            {{ object.name }}
         </a>
         <div class="dropdown-menu" aria-labelledby="carDropdown">
-            {% for car in cars %}
-                {% if car == current_car %}
+            {% for car in all_cars %}
+                {% if car == object %}
                     <b><a class="dropdown-item" href="{% url 'reservation:calendar_car' car.id %}">
                         {{ car.name }}
                     </a></b>
@@ -45,17 +50,21 @@
 {% block body %}
     <div class="row justify-content-between">
         <div class="col">
-            <h1>{{ current_car.name }}
-                <a class="btn btn-secondary" href="{% url 'reservation:calendar_car_config' current_car.id %}">
-                    <i class="fas fa-sliders-h"></i>
+            <h1>
+                <a href="{% url 'reservation:calendar_car_config' object.id %}" class="calendar-title">
+                    {{ object.name }}
+                    <i style="color: #888; font-size: 0.8em" class="fas fa-cog" id="calendar-title-icon"></i>
                 </a>
             </h1>
         </div>
-        <div class="float-right">
-            <button class="btn btn-primary" id="prev-week" onclick="calendar.prev()">
+        <div class="float-right" style="margin-right: 10px">
+            <button class="btn btn-primary" onclick="calendar.today()">
+                <i class="fas fa-calendar"></i>
+            </button>
+            <button class="btn btn-primary" onclick="calendar.prev()">
                 <i class="fas fa-chevron-left"></i>
             </button>
-            <button class="btn btn-primary" id="next-week" onclick="calendar.next()">
+            <button class="btn btn-primary" onclick="calendar.next()">
                 <i class="fas fa-chevron-right"></i>
             </button>
         </div>
@@ -74,20 +83,24 @@
 
     <script>
 
-        let currentCarId = {{ current_car.id }};
+        let currentCarId = {{ object.id }};
         let calendarEl = $("#calendar").get(0);
-        let calendar = new FullCalendar.Calendar(calendarEl, {
+        let calendarOptions = {
             plugins: ['interaction', 'timeGrid', 'bootstrap'],
             defaultView: 'timeGridWeek',
+            views: {
+                timeGridThreeDay: {
+                    type: 'timeGrid',
+                    duration: {days: 3},
+                }
+            },
             themeSystem: 'bootstrap',
-
             header: {
                 left: '',
                 center: '',
                 right: ''
             },
             allDaySlot: false,
-
             slotLabelFormat: {
                 hour: '2-digit',
                 minute: '2-digit'
@@ -97,12 +110,9 @@
                 minute: '2-digit'
             },
             locale: 'be',
-
-            editable: true,
-            eventStartEditable: false,
-            eventDurationEditable: false,
-
             firstDay: 1,
+            nowIndicator: true,
+            height: 'parent',
 
             dateClick: function (dateClickInfo) {
                 window.open(
@@ -110,9 +120,6 @@
                     "_self"
                 )
             },
-
-            nowIndicator: true,
-            height: 'parent',
 
             eventSources: [
                 function (info, successCallback, failureCallback) {
@@ -132,12 +139,13 @@
                                     id: e.id,
                                     start: new Date(e.start_time),
                                     end: new Date(e.end_time),
-                                    url: '/reservation/' + e.id
+                                    url: '/reservation/' + e.id,
+                                    backgroundColor: e.owner.profile.calendar_color,
+                                    borderColor: e.owner.profile.calendar_color,
+                                    title: capitalizeFirstLetter(e.owner.username) + '\n'
+                                        + capitalizeFirstLetter(e.location) + ' · ' + e.distance + ' km \n',
+                                    editable: false,
                                 };
-                                eventObject.backgroundColor = e.owner.profile.calendar_color;
-                                eventObject.borderColor = e.owner.profile.calendar_color;
-                                eventObject.title = capitalizeFirstLetter(e.owner.username) + '\n';
-                                eventObject.title += capitalizeFirstLetter(e.location) + ' · ' + e.distance + ' km \n';
                                 calendarEvents.push(eventObject);
                             }
                             successCallback(calendarEvents);
@@ -160,19 +168,38 @@
                                     id: e.id,
                                     start: new Date(e.start_time),
                                     end: new Date(e.end_time),
-                                    url: '/charging_reservation/' + e.id
+                                    url: '/charging_reservation/' + e.id,
+                                    backgroundColor: '#868e96',
+                                    borderColor: '#868e96',
+                                    title: 'Charging',
+                                    editable: true,
+                                    eventStartEditable: true,
+                                    eventDurationEditable: false,
                                 };
-                                eventObject.backgroundColor = '#868e96';
-                                eventObject.borderColor = '#868e96';
-                                eventObject.title = 'Charging';
                                 calendarEvents.push(eventObject);
                             }
                             successCallback(calendarEvents);
                         }
                     });
+                }, function (info, successCallback, failureCallback) {
+                    successCallback([{
+                        daysOfWeek: [0, 6], //Sundays and saturdays
+                        rendering: "background",
+                        color: "#d5d5d5",
+                        overLap: false,
+                        allDay: true
+                    }])
                 }
             ]
-        })
+        };
+
+        if (checkMobile()) {
+            calendarOptions.defaultView = 'timeGridThreeDay';
+            $("#calendar-title-icon").hide();
+        }
+
+
+        let calendar = new FullCalendar.Calendar(calendarEl, calendarOptions);
         calendar.render();
 
     </script>

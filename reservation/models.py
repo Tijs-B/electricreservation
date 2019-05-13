@@ -26,8 +26,8 @@ def save_user_profile(sender, instance, **kwargs):
 class Car(models.Model):
     name = models.CharField(max_length=200)
 
-    summer_driving_range = models.PositiveIntegerField()
-    winter_driving_range = models.PositiveIntegerField()
+    summer_driving_range = models.PositiveIntegerField(verbose_name="Summer driving range (km)")
+    winter_driving_range = models.PositiveIntegerField(verbose_name="Winter driving range (km)")
 
     charging_time = models.PositiveIntegerField(verbose_name="Charging time (in hours)")
 
@@ -42,7 +42,7 @@ class Reservation(models.Model):
     car = models.ForeignKey(Car, on_delete=models.CASCADE)
     description = models.CharField(max_length=200, default='', blank=True)
 
-    distance = models.PositiveIntegerField()
+    distance = models.PositiveIntegerField(verbose_name="Distance (km)")
     location = models.CharField(max_length=100)
 
     start_time = models.DateTimeField()

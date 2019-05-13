@@ -6,7 +6,6 @@
     <div class="row justify-content-center">
         <div class="col-md-8">
             <h1 class="mt-2">Reservation</h1>
-
             {% crispy form %}
         </div>
     </div>
@@ -50,11 +49,18 @@
         let input_start_time = $("#id_start_time").get(0);
         let input_end_time = $("#id_end_time").get(0);
 
-        let picker = new Picker(input_start_time, {
-            controls: true,
-            headers: true,
-            format: "YYYY-MM-DD hh:mm:ss"
-        });
+        if (checkMobile()) {
+            let start_picker = new Picker(input_start_time, {
+                controls: true,
+                headers: true,
+                format: "YYYY-MM-DD HH:mm:ss"
+            });
+            let end_picker = new Picker(input_start_time, {
+                controls: true,
+                headers: true,
+                format: "YYYY-MM-DD HH:mm:ss"
+            });
+        }
 
         function deleteReservation() {
             $("#confirmDeletionModal").modal('toggle');

@@ -10,7 +10,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.views import View
 from django.views.generic import UpdateView, CreateView, DeleteView
-from django.views.generic.detail import SingleObjectMixin
+from django.views.generic.detail import SingleObjectMixin, DetailView
 from rest_framework import generics
 
 from reservation.models import Car, Reservation, ChargingReservation
@@ -30,31 +30,17 @@ def calendar(request):
     return redirect('reservation:calendar_car', car_id=default_car.id)
 
 
-# class CalendarCar(LoginRequiredMixin, UserPassesTestMixin, DetailView):
-#     model = Car
-#     template_name = 'reservation/calendar.html'
-#
-#     def test_func(self):
-#         return self.request.user.car_set.filter(pk=self.kwargs['pk']).exists()
-#
-#     def get_context_data(self, **kwargs):
-#         context = super().get_context_data(**kwargs)
-#         print(context)
-#         context['cars'] = self.request.user.car_set.all()
+class CalendarCar(LoginRequiredMixin, UserPassesTestMixin, DetailView):
+    model = Car
+    template_name = 'reservation/calendar.html'
 
+    def test_func(self):
+        return self.get_object() in self.request.user.car_set.all()
 
-@login_required
-def calendar_car(request, car_id):
-    car = get_object_or_404(Car, pk=car_id)
-    if not request.user.car_set.filter(pk=car_id).exists():
-        raise Http404()
-
-    context = {
-        'current_car': car,
-        'cars': request.user.car_set.all()
-    }
-
-    return render(request, 'reservation/calendar.html', context)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['all_cars'] = self.request.user.car_set.all()
+        return context
 
 
 class CarConfig(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
@@ -102,7 +88,7 @@ class ReservationDelete(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
 
 class ReservationAdd(LoginRequiredMixin, UserPassesTestMixin, CreateView):
-    template_name = 'reservation/reservation_detail.html'
+    template_name = 'reservation/reservation_add.html'
     model = Reservation
     fields = ('description', 'distance', 'location', 'start_time', 'end_time', 'should_be_charged_fully', 'priority')
 
@@ -112,7 +98,12 @@ class ReservationAdd(LoginRequiredMixin, UserPassesTestMixin, CreateView):
 
     def get_initial(self):
         initial = super().get_initial()
-        start_time = datetime.datetime.fromtimestamp(int(self.request.GET['time']))
+
+        if 'time' in self.request.GET:
+            start_time = datetime.datetime.fromtimestamp(int(self.request.GET['time']))
+        else:
+            start_time = datetime.datetime.now().replace(microsecond=0, second=0, minute=0)
+
         end_time = start_time + datetime.timedelta(hours=1)
         initial['start_time'] = start_time
         initial['end_time'] = end_time
@@ -131,6 +122,55 @@ class ReservationAdd(LoginRequiredMixin, UserPassesTestMixin, CreateView):
         form.helper = FormHelper()
         form.helper.add_input(Submit('submit', 'Create'))
         return form
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['car'] = Car.objects.get(pk=self.kwargs['car_id'])
+        context['reservation_type'] = 'reservation'
+        return context
+
+
+class ChargingReservationAdd(LoginRequiredMixin, UserPassesTestMixin, CreateView):
+    template_name = 'reservation/reservation_add.html'
+    model = ChargingReservation
+    fields = ('start_time', 'end_time')
+
+    def test_func(self):
+        car_id = self.kwargs['car_id']
+        return self.request.user.car_set.filter(pk=car_id).exists()
+
+    def get_initial(self):
+        initial = super().get_initial()
+
+        if 'time' in self.request.GET:
+            start_time = datetime.datetime.fromtimestamp(int(self.request.GET['time']))
+        else:
+            start_time = datetime.datetime.now().replace(microsecond=0, second=0, minute=0)
+
+        car = Car.objects.get(pk=self.kwargs['car_id'])
+        end_time = start_time + datetime.timedelta(hours=car.charging_time)
+        initial['start_time'] = start_time
+        initial['end_time'] = end_time
+        return initial
+
+    def get_success_url(self):
+        return reverse('reservation:calendar_car', kwargs={'car_id': self.kwargs['car_id']})
+
+    def form_valid(self, form):
+        form.instance.car = Car.objects.get(pk=self.kwargs['car_id'])
+        return super().form_valid(form)
+
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+        form.helper = FormHelper()
+        form.helper.add_input(Submit('submit', 'Create'))
+        return form
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['car'] = Car.objects.get(pk=self.kwargs['car_id'])
+        context['reservation_type'] = 'charging_reservation'
+        return context
 
 
 class APIReservationsList(LoginRequiredMixin, UserPassesTestMixin, generics.ListAPIView):

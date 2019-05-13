@@ -1,0 +1,64 @@
+{% extends 'reservation/base.html' %}
+
+{% load crispy_forms_tags %}
+
+{% block body %}
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <ul class="nav nav-tabs" style="margin-bottom: 20px">
+                {% if reservation_type == 'reservation' %}
+                    <li class="nav-item">
+                        <h4><a href="#" class="nav-link active">Reservation</a></h4>
+                    </li>
+                    <li class="nav-item">
+                        <h4>
+                            <a href="{% url 'reservation:charging_reservation_add' car.id %}?time={{ request.GET.time }}"
+                               class="nav-link">
+                                Charging reservation
+                            </a>
+                        </h4>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <h4>
+                            <a href="{% url 'reservation:reservation_add' car.id %}?time={{ request.GET.time }}"
+                               class="nav-link">Reservation</a>
+                        </h4>
+                    </li>
+                    <li class="nav-item">
+                        <h4><a href="#" class="nav-link active">Charging reservation</a></h4>
+                    </li>
+                {% endif %}
+            </ul>
+            {% crispy form %}
+        </div>
+    </div>
+{% endblock body %}
+
+{% block head %}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pickerjs@1.2.1/dist/picker.min.css"
+          integrity="sha256-Rbg3v/C7NqiVTWBxzR5iWrm8qv3TLhG7M+r5M8L73TY=" crossorigin="anonymous">
+{% endblock head %}
+
+{% block script %}
+    <script src="https://cdn.jsdelivr.net/npm/pickerjs@1.2.1/dist/picker.min.js"
+            integrity="sha256-yMIn2/F+otyl7rKx6Z49VTlJxrg/wGFBLKqO2eRHkPg=" crossorigin="anonymous"></script>
+
+    <script>
+        let input_start_time = $("#id_start_time").get(0);
+        let input_end_time = $("#id_end_time").get(0);
+
+        if (checkMobile()) {
+            let start_picker = new Picker(input_start_time, {
+                controls: true,
+                headers: true,
+                format: "YYYY-MM-DD HH:mm:ss"
+            });
+            let end_picker = new Picker(input_start_time, {
+                controls: true,
+                headers: true,
+                format: "YYYY-MM-DD HH:mm:ss"
+            });
+        }
+    </script>
+{% endblock script %}
