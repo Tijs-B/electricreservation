@@ -5,6 +5,7 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit, Button
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.db.models import Q
 from django.http import Http404
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
@@ -13,6 +14,7 @@ from django.views.generic import UpdateView, CreateView, DeleteView
 from django.views.generic.detail import SingleObjectMixin, DetailView
 from rest_framework import generics
 
+from reservation.forms import ReservationDetailForm, ReservationAddForm, ChargingReservationAddForm
 from reservation.models import Car, Reservation, ChargingReservation
 from reservation.serializers import ReservationSerializer, ChargingReservationSerializer
 
@@ -49,7 +51,7 @@ class CarConfig(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     fields = ('name', 'summer_driving_range', 'winter_driving_range', 'charging_time')
 
     def get_success_url(self):
-        return reverse('reservation:calendar_car', kwargs={'car_id': self.kwargs['pk']})
+        return reverse('reservation:calendar_car', kwargs={'pk': self.kwargs['pk']})
 
     def test_func(self):
         return self.request.user.car_set.filter(pk=self.kwargs['pk']).exists()
@@ -58,22 +60,14 @@ class CarConfig(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 class ReservationDetail(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     template_name = 'reservation/reservation_detail.html'
     model = Reservation
-    fields = ('description', 'distance', 'location', 'start_time', 'end_time', 'should_be_charged_fully', 'priority')
+    form_class = ReservationDetailForm
 
     def test_func(self):
         car_id = self.get_object().car.id
         return self.request.user.car_set.filter(pk=car_id).exists()
 
     def get_success_url(self):
-        return reverse('reservation:calendar_car', kwargs={'car_id': self.get_object().car.id})
-
-    def get_form(self, form_class=None):
-        form = super().get_form(form_class)
-        form.helper = FormHelper()
-        form.helper.add_input(Submit('submit', 'Update'))
-        form.helper.add_input(Button('delete', 'Delete', onclick="deleteReservation()",
-                                     css_class='btn-danger'))
-        return form
+        return reverse('reservation:calendar_car', kwargs={'pk': self.get_object().car.id})
 
 
 class ReservationDelete(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
@@ -84,13 +78,13 @@ class ReservationDelete(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         return self.request.user.car_set.filter(pk=car_id).exists()
 
     def get_success_url(self):
-        return reverse('reservation:calendar_car', kwargs={'car_id': self.get_object().car.id})
+        return reverse('reservation:calendar_car', kwargs={'pk': self.get_object().car.id})
 
 
 class ReservationAdd(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     template_name = 'reservation/reservation_add.html'
     model = Reservation
-    fields = ('description', 'distance', 'location', 'start_time', 'end_time', 'should_be_charged_fully', 'priority')
+    form_class = ReservationAddForm
 
     def test_func(self):
         car_id = self.kwargs['car_id']
@@ -110,18 +104,12 @@ class ReservationAdd(LoginRequiredMixin, UserPassesTestMixin, CreateView):
         return initial
 
     def get_success_url(self):
-        return reverse('reservation:calendar_car', kwargs={'car_id': self.kwargs['car_id']})
+        return reverse('reservation:calendar_car', kwargs={'pk': self.kwargs['car_id']})
 
     def form_valid(self, form):
         form.instance.car = Car.objects.get(pk=self.kwargs['car_id'])
         form.instance.owner = self.request.user
         return super().form_valid(form)
-
-    def get_form(self, form_class=None):
-        form = super().get_form(form_class)
-        form.helper = FormHelper()
-        form.helper.add_input(Submit('submit', 'Create'))
-        return form
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -133,7 +121,7 @@ class ReservationAdd(LoginRequiredMixin, UserPassesTestMixin, CreateView):
 class ChargingReservationAdd(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     template_name = 'reservation/reservation_add.html'
     model = ChargingReservation
-    fields = ('start_time', 'end_time')
+    form_class = ChargingReservationAddForm
 
     def test_func(self):
         car_id = self.kwargs['car_id']
@@ -154,17 +142,11 @@ class ChargingReservationAdd(LoginRequiredMixin, UserPassesTestMixin, CreateView
         return initial
 
     def get_success_url(self):
-        return reverse('reservation:calendar_car', kwargs={'car_id': self.kwargs['car_id']})
+        return reverse('reservation:calendar_car', kwargs={'pk': self.kwargs['car_id']})
 
     def form_valid(self, form):
         form.instance.car = Car.objects.get(pk=self.kwargs['car_id'])
         return super().form_valid(form)
-
-    def get_form(self, form_class=None):
-        form = super().get_form(form_class)
-        form.helper = FormHelper()
-        form.helper.add_input(Submit('submit', 'Create'))
-        return form
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -182,7 +164,9 @@ class APIReservationsList(LoginRequiredMixin, UserPassesTestMixin, generics.List
     def get_queryset(self):
         start_time = dateutil.parser.parse(self.request.GET['start'])
         end_time = dateutil.parser.parse(self.request.GET['end'])
-        return Reservation.objects.filter(car__id=self.kwargs['pk'], start_time__range=(start_time, end_time))
+        return Reservation.objects.\
+            filter(Q(car__id=self.kwargs['pk']) &
+                   (Q(start_time__range=(start_time, end_time)) | Q(end_time__range=(start_time, end_time))))
 
 
 class APIChargingReservationsList(LoginRequiredMixin, UserPassesTestMixin, generics.ListAPIView):
@@ -194,4 +178,6 @@ class APIChargingReservationsList(LoginRequiredMixin, UserPassesTestMixin, gener
     def get_queryset(self):
         start_time = dateutil.parser.parse(self.request.GET['start'])
         end_time = dateutil.parser.parse(self.request.GET['end'])
-        return ChargingReservation.objects.filter(car__id=self.kwargs['pk'], start_time__range=(start_time, end_time))
+        return ChargingReservation.objects.\
+            filter(Q(car__id=self.kwargs['pk']) &
+                   (Q(start_time__range=(start_time, end_time)) | Q(end_time__range=(start_time, end_time))))
