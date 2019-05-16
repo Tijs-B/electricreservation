@@ -29,7 +29,7 @@ def index(request):
 @login_required
 def calendar(request):
     default_car = Car.objects.filter(users__in=[request.user]).first()
-    return redirect('reservation:calendar_car', car_id=default_car.id)
+    return redirect('reservation:calendar_car', pk=default_car.id)
 
 
 class CalendarCar(LoginRequiredMixin, UserPassesTestMixin, DetailView):

@@ -1,5 +1,9 @@
+import datetime
+
+import dateutil
 from django.db import models
 from django.contrib.auth.models import User
+from django.db.models import ExpressionWrapper, F, DurationField, Sum
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
@@ -35,6 +39,26 @@ class Car(models.Model):
 
     def __str__(self):
         return self.name
+
+    def get_distance_left(self, time):
+        last_charging_reservation = self.chargingreservation_set \
+            .annotate(diff=ExpressionWrapper(F('end_time') - F('start_time'), output_field=DurationField())) \
+            .filter(diff__gte=datetime.timedelta(hours=self.charging_time)) \
+            .filter(end_time__lte=time) \
+            .order_by('-end_time') \
+            .first()
+        if last_charging_reservation is None:
+            last_charging_time = dateutil.parser.parse("1970-01-01T00:00+00:00")
+        else:
+            last_charging_time = last_charging_reservation.end_time
+
+        distance_driven = self.reservation_set \
+            .filter(start_time__gte=last_charging_time, end_time__lte=time) \
+            .aggregate(Sum('distance'))['distance__sum']
+        if 4 <= datetime.datetime.now().month <= 9:
+            return self.summer_driving_range - distance_driven
+        else:
+            return self.winter_driving_range - distance_driven
 
 
 class Reservation(models.Model):
