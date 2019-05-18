@@ -30,6 +30,7 @@
                     </li>
                 {% endif %}
             </ul>
+            <div id="distance-alert"></div>
             {% crispy form %}
         </div>
     </div>
@@ -45,20 +46,59 @@
             integrity="sha256-yMIn2/F+otyl7rKx6Z49VTlJxrg/wGFBLKqO2eRHkPg=" crossorigin="anonymous"></script>
 
     <script>
-        let input_start_time = $("#id_start_time").get(0);
-        let input_end_time = $("#id_end_time").get(0);
+        let input_start_time = $("#id_start_time");
+        let input_end_time = $("#id_end_time");
 
         if (checkMobile()) {
-            let start_picker = new Picker(input_start_time, {
+            let start_picker = new Picker(input_start_time.get(0), {
                 controls: true,
                 headers: true,
                 format: "YYYY-MM-DD HH:mm:ss"
             });
-            let end_picker = new Picker(input_start_time, {
+            let end_picker = new Picker(input_end_time.get(0), {
                 controls: true,
                 headers: true,
                 format: "YYYY-MM-DD HH:mm:ss"
             });
         }
+
+        function updateDistanceLeft() {
+            let unix = new Date(input_start_time.val()).getTime() / 1000;
+            if (unix) {
+                $.ajax({
+                    dataType: 'json',
+                    type: 'get',
+                    url: '/api/car/{{ car.id }}/distance_left/',
+                    data: {time: unix},
+                    success: function (result) {
+                        let driving_range = result['driving_range'];
+                        let distance_left = result['distance_left'];
+
+                        let div = $('#distance-alert');
+                        if (distance_left < driving_range * 0.3) {
+                            div.attr('class', 'alert alert-danger');
+                            div.html(`Warning! Just <b>${distance_left} km</b> left at ${input_start_time.val()}`);
+                        } else if (distance_left < driving_range * 0.7) {
+                            div.attr('class', 'alert alert-warning');
+                            div.html(`Warning! Just <b>${distance_left} km</b> left at ${input_start_time.val()}`);
+                        } else {
+                            div.attr('class', 'alert alert-success');
+                            div.html(`The car has <b>${distance_left} km</b> left at ${input_start_time.val()}`);
+                        }
+                    }
+                });
+            }
+        }
+
+        {% if reservation_type == 'reservation' %}
+            $(function () {
+                updateDistanceLeft();
+            });
+
+            input_start_time.on('input', $.debounce(500, function (e) {
+                updateDistanceLeft();
+            }));
+        {% endif %}
+
     </script>
 {% endblock script %}
