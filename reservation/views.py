@@ -75,6 +75,12 @@ class ReservationDetail(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         context['reservation_type'] = 'reservation'
         return context
 
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['car'] = self.get_object().car
+        kwargs['owner'] = self.get_object().owner
+        return kwargs
+
 
 class ReservationDelete(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Reservation
@@ -144,6 +150,11 @@ class ChargingReservationDetail(LoginRequiredMixin, UserPassesTestMixin, UpdateV
         context = super().get_context_data(**kwargs)
         context['reservation_type'] = 'charging_reservation'
         return context
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['car'] = self.get_object().car
+        return kwargs
 
 
 class ChargingReservationDelete(LoginRequiredMixin, UserPassesTestMixin, DeleteView):

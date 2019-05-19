@@ -63,6 +63,9 @@ class Car(models.Model):
             .filter(start_time__gte=last_charging_time, end_time__lte=time) \
             .aggregate(Sum('distance'))['distance__sum']
 
+        if not distance_driven:
+            distance_driven = 0
+
         return self.get_driving_range(time) - distance_driven
 
 

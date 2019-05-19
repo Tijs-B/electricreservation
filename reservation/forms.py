@@ -28,7 +28,7 @@ class ReservationOverlapsMixin:
             raise ValidationError("Reservation overlaps with another charging reservation")
 
 
-class ReservationAddForm(forms.ModelForm):
+class ReservationAddForm(ReservationOverlapsMixin, forms.ModelForm):
     class Meta:
         fields = ('description', 'distance', 'location', 'start_time', 'end_time', 'should_be_charged_fully',
                   'priority')
@@ -49,22 +49,34 @@ class ReservationAddForm(forms.ModelForm):
             instance.save()
         return instance
 
+    def clean(self):
+        super().clean()
+        # TODO: check if enough available distance left
+        # TODO: check if no other reservation would get in trouble
 
-class ReservationDetailForm(forms.ModelForm):
+
+class ReservationDetailForm(ReservationOverlapsMixin, forms.ModelForm):
     class Meta:
         fields = ('description', 'distance', 'location', 'start_time', 'end_time', 'should_be_charged_fully',
                   'priority')
         model = Reservation
 
     def __init__(self, *args, **kwargs):
+        self.car = kwargs.pop('car')
+        self.owner = kwargs.pop('owner')
         super(ReservationDetailForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.add_input(Submit('submit', 'Update'))
         self.helper.add_input(Button('delete', 'Delete', onclick="deleteReservation()",
                                      css_class='btn-danger'))
 
+    def clean(self):
+        super().clean()
+        # TODO: check if enough available distance left
+        # TODO: check if no other reservation would get in trouble
 
-class ChargingReservationAddForm(forms.ModelForm):
+
+class ChargingReservationAddForm(ReservationOverlapsMixin, forms.ModelForm):
     class Meta:
         fields = ('start_time', 'end_time')
         model = ChargingReservation
@@ -83,12 +95,13 @@ class ChargingReservationAddForm(forms.ModelForm):
         return instance
 
 
-class ChargingReservationDetailForm(forms.ModelForm):
+class ChargingReservationDetailForm(ReservationOverlapsMixin, forms.ModelForm):
     class Meta:
         fields = ('start_time', 'end_time')
         model = ChargingReservation
 
     def __init__(self, *args, **kwargs):
+        self.car = kwargs.pop('car')
         super(ChargingReservationDetailForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.add_input(Submit('submit', 'Update'))
