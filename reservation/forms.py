@@ -51,7 +51,12 @@ class ReservationAddForm(ReservationOverlapsMixin, forms.ModelForm):
 
     def clean(self):
         super().clean()
-        # TODO: check if enough available distance left
+
+        distance_left = self.car.get_distance_left(self.cleaned_data['start_tune'])
+        if distance_left < self.cleaned_data['distance']:
+            raise ValidationError(f"The car doesn't have enough distance left (need {self.cleaned_data['distance']} "
+                                  f"km, {distance_left} km left)")
+
         # TODO: check if no other reservation would get in trouble
 
 
@@ -72,7 +77,12 @@ class ReservationDetailForm(ReservationOverlapsMixin, forms.ModelForm):
 
     def clean(self):
         super().clean()
-        # TODO: check if enough available distance left
+
+        distance_left = self.car.get_distance_left(self.cleaned_data['start_tune'])
+        if distance_left < self.cleaned_data['distance']:
+            raise ValidationError(f"The car doesn't have enough distance left (need {self.cleaned_data['distance']} "
+                                  f"km, {distance_left} km left)")
+
         # TODO: check if no other reservation would get in trouble
 
 
