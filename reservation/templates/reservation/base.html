@@ -77,17 +77,6 @@
                 mouseover: 'pause',
                 type: '{{ message.level_tag }}'
             });
-            {% if message.level_tag == 'debug' %}
-
-            {% elif message.level_tag == 'info' %}
-
-            {% elif message.level_tag == 'success' %}
-
-            {% elif message.level_tag == 'warning' %}
-
-            {% elif message.level_tag == 'error' %}
-
-            {% endif %}
         {% endfor %}
     </script>
 {% endif %}

@@ -6,9 +6,9 @@
     <div class="row justify-content-center">
         <div class="col-md-8">
             {% if reservation_type == 'reservation' %}
-            <h1 class="mt-2">Reservation</h1>
+                <h1 class="mt-2">Reservation</h1>
             {% else %}
-            <h1 class="mt-2">Charging Reservation</h1>
+                <h1 class="mt-2">Charging Reservation</h1>
             {% endif %}
 
             <div id="distance-alert"></div>
@@ -35,15 +35,15 @@
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
                         {% if reservation_type == 'reservation' %}
-                        <form action="{% url 'reservation:reservation_delete' object.id %}" method="post">
-                            {% csrf_token %}
-                            <button type="submit" class="btn btn-danger">Delete</button>
-                        </form>
+                            <form action="{% url 'reservation:reservation_delete' object.id %}" method="post">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-danger">Delete</button>
+                            </form>
                         {% else %}
-                        <form action="{% url 'reservation:charging_reservation_delete' object.id %}" method="post">
-                            {% csrf_token %}
-                            <button type="submit" class="btn btn-danger">Delete</button>
-                        </form>
+                            <form action="{% url 'reservation:charging_reservation_delete' object.id %}" method="post">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-danger">Delete</button>
+                            </form>
                         {% endif %}
                     </div>
                 </div>
@@ -82,35 +82,37 @@
             $("#confirmDeletionModal").modal('toggle');
         }
 
-        function updateDistanceLeft() {
-            let unix = new Date(input_start_time.val()).getTime() / 1000;
-            if (unix) {
-                $.ajax({
-                    dataType: 'json',
-                    type: 'get',
-                    url: '/api/car/{{ car.id }}/distance_left/',
-                    data: {time: unix},
-                    success: function (result) {
-                        let driving_range = result['driving_range'];
-                        let distance_left = result['distance_left'];
-
-                        let div = $('#distance-alert');
-                        if (distance_left < driving_range * 0.3) {
-                            div.attr('class', 'alert alert-danger');
-                            div.html(`Warning! Just <b>${distance_left} km</b> left at ${input_start_time.val()}`);
-                        } else if (distance_left < driving_range * 0.7) {
-                            div.attr('class', 'alert alert-warning');
-                            div.html(`Warning! Just <b>${distance_left} km</b> left at ${input_start_time.val()}`);
-                        } else {
-                            div.attr('class', 'alert alert-success');
-                            div.html(`The car has <b>${distance_left} km</b> left at ${input_start_time.val()}`);
-                        }
-                    }
-                });
-            }
-        }
-
         {% if reservation_type == 'reservation' %}
+
+            let distanceLeft;
+
+            function updateDistanceLeft() {
+                let unix = new Date(input_start_time.val()).getTime() / 1000;
+                if (unix) {
+                    $.ajax({
+                        dataType: 'json',
+                        type: 'get',
+                        url: '/api/car/{{ car.id }}/distance_left/',
+                        data: {time: unix},
+                        success: function (result) {
+                            let drivingRange = result['driving_range'];
+                            distanceLeft = result['distance_left'];
+
+                            let div = $('#distance-alert');
+                            if (distanceLeft < drivingRange * 0.3) {
+                                div.attr('class', 'alert alert-danger');
+                                div.html(`Warning! Just <b>${distanceLeft} km</b> left at ${input_start_time.val()}`);
+                            } else if (distanceLeft < drivingRange * 0.7) {
+                                div.attr('class', 'alert alert-warning');
+                                div.html(`Warning! Just <b>${distanceLeft} km</b> left at ${input_start_time.val()}`);
+                            } else {
+                                div.attr('class', 'alert alert-success');
+                                div.html(`The car has <b>${distanceLeft} km</b> left at ${input_start_time.val()}`);
+                            }
+                        }
+                    });
+                }
+            }
             $(function () {
                 updateDistanceLeft();
             });
@@ -121,7 +123,8 @@
         {% endif %}
 
         {% if reservation_type == 'charging_reservation' %}
-            $("#id_start_time").on('input', function(e) {
+            // Set end time to start time + charging time
+            $("#id_start_time").on('input', function (e) {
                 let date = new Date($("#id_start_time").val());
                 if (date.getTime()) {
                     date.addHours({{ car.charging_time }});

@@ -96,13 +96,16 @@
             </h1>
         </div>
         <div class="float-right" style="margin-right: 10px">
-            <button class="btn btn-primary" onclick="calendar.today()">
+            <button class="btn btn-primary" onclick="calendar.today()" data-toggle="tooltip" data-placement="top"
+                    title="Today">
                 <i class="fas fa-calendar"></i>
             </button>
-            <button class="btn btn-primary" onclick="calendar.prev()">
+            <button class="btn btn-primary" onclick="calendar.prev()" data-toggle="tooltip" data-placement="top"
+                    title="Previous">
                 <i class="fas fa-chevron-left"></i>
             </button>
-            <button class="btn btn-primary" onclick="calendar.next()">
+            <button class="btn btn-primary" onclick="calendar.next()" data-toggle="tooltip" data-placement="top"
+                    title="Next">
                 <i class="fas fa-chevron-right"></i>
             </button>
         </div>
@@ -260,6 +263,7 @@
                                     editable: true,
                                     eventStartEditable: true,
                                     eventDurationEditable: false,
+                                    extendedProps: {testData: 'hallo'},
                                 };
                                 calendarEvents.push(eventObject);
                             }

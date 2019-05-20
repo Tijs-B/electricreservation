@@ -41,27 +41,6 @@ class ReservationAddForm(forms.ModelForm):
         if not self.car.time_slot_free(start_time, end_time):
             raise ValidationError("Reservation overlaps with another reservation")
 
-        # Check enough distance left
-        distance_left = self.car.get_distance_left(start_time)
-        if distance_left < self.cleaned_data['distance']:
-            raise ValidationError(f"The car doesn't have enough distance left (need {self.cleaned_data['distance']} "
-                                  f"km, {distance_left} km left)")
-
-        # Check no other reservations could get into trouble
-        next_charging_time = self.car.get_next_charging_time_after(end_time)
-        last_reservation = Reservation.objects \
-            .filter(start_time__gte=end_time, end_time__lte=next_charging_time) \
-            .order_by('-start_time') \
-            .first()
-
-        if last_reservation:
-            distance_left_at_last = self.car.get_distance_left(last_reservation.start_time)
-            if distance_left_at_last - self.cleaned_data['distance'] < last_reservation.distance:
-                raise ValidationError(f"Booking this reservation would mean that at least one other reservation would "
-                                      f"be cancelled, including a reservation to "
-                                      f"{last_reservation.location.capitalize()} made by "
-                                      f"{last_reservation.owner.username.capitalize()}")
-
 
 class ReservationDetailForm(forms.ModelForm):
     class Meta:
@@ -92,27 +71,6 @@ class ReservationDetailForm(forms.ModelForm):
         # Check overlap
         if not self.car.time_slot_free(start_time, end_time, exclude_reservation_id=self.id):
             raise ValidationError("Reservation overlaps with another reservation")
-
-        # Check enough distance left
-        distance_left = self.car.get_distance_left(start_time, exclude_reservation_id=self.id)
-        if distance_left < self.cleaned_data['distance']:
-            raise ValidationError(f"The car doesn't have enough distance left (need {self.cleaned_data['distance']} "
-                                  f"km, {distance_left} km left)")
-
-        # Check no other reservations could get into trouble
-        next_charging_time = self.car.get_next_charging_time_after(end_time)
-        last_reservation = Reservation.objects.exclude(pk=self.id) \
-            .filter(start_time__gte=end_time, end_time__lte=next_charging_time) \
-            .order_by('-start_time') \
-            .first()
-
-        if last_reservation:
-            distance_left_at_last = self.car.get_distance_left(last_reservation.start_time,
-                                                               exclude_reservation_id=self.id)
-            if distance_left_at_last - self.cleaned_data['distance'] < last_reservation.distance:
-                raise ValidationError(f"Booking this reservation would mean that at least one other reservation would "
-                                      f"be cancelled, including a reservation to {last_reservation.location} made by "
-                                      f"{last_reservation.owner.username.capitalize()}")
 
 
 class ChargingReservationAddForm(forms.ModelForm):
@@ -191,5 +149,3 @@ class ChargingReservationDetailForm(forms.ModelForm):
         charging_time = self.cleaned_data['end_time'] - self.cleaned_data['start_time']
         if charging_time.total_seconds() < self.car.charging_time * 60 * 60:
             raise ValidationError(f"The car should charge for at least {self.car.charging_time} hours")
-
-        # Check if no other reservations could get into trouble
