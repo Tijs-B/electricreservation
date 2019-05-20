@@ -146,6 +146,7 @@
             firstDay: 1,
             nowIndicator: true,
             height: 'parent',
+            eventOverlap: false,
 
             dateClick: function (dateClickInfo) {
                 let clickedTime = dateClickInfo.date.getTime() / 1000;
@@ -180,6 +181,20 @@
                         $("#add-reservation-button").prop('disabled', false);
                     }
                 });
+            },
+
+            eventDrop: function(eventDropInfo) {
+                let newEvent = eventDropInfo.event;
+                $.ajax('/charging_reservation/' + newEvent.id + '/', {
+                    method: 'post',
+                    data: {
+                        'start_time': $.format.date(newEvent.start, 'yyyy-MM-dd HH:mm:ss'),
+                        'end_time': $.format.date(newEvent.end, 'yyyy-MM-dd HH:mm:ss'),
+                    },
+                    error: function(xhr) {
+                        alert('Moving charging reservation failed: ' + xhr.response);
+                    }
+                })
             },
 
             eventSources: [
@@ -251,7 +266,7 @@
                         allDay: true
                     }])
                 }
-            ]
+            ],
         };
 
         if (checkMobile()) {
