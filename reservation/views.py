@@ -1,8 +1,10 @@
 import datetime
 
 import dateutil.parser
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.contrib.messages.views import SuccessMessageMixin
 from django.db.models import Q
 from django.http import JsonResponse
 from django.shortcuts import redirect
@@ -44,10 +46,11 @@ class CalendarCar(LoginRequiredMixin, UserPassesTestMixin, DetailView):
         return context
 
 
-class CarConfig(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+class CarConfig(LoginRequiredMixin, UserPassesTestMixin, SuccessMessageMixin, UpdateView):
     template_name = 'reservation/car_config.html'
     model = Car
     fields = ('name', 'summer_driving_range', 'winter_driving_range', 'charging_time')
+    success_message = 'Car saved successfully'
 
     def get_success_url(self):
         return reverse('reservation:calendar_car', kwargs={'pk': self.kwargs['pk']})
@@ -56,10 +59,11 @@ class CarConfig(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         return self.request.user.car_set.filter(pk=self.kwargs['pk']).exists()
 
 
-class ReservationDetail(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+class ReservationDetail(LoginRequiredMixin, UserPassesTestMixin, SuccessMessageMixin, UpdateView):
     template_name = 'reservation/reservation_detail.html'
     model = Reservation
     form_class = ReservationDetailForm
+    success_message = 'Reservation saved successfully'
 
     def test_func(self):
         car_id = self.get_object().car.id
@@ -82,21 +86,27 @@ class ReservationDetail(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         return context
 
 
-class ReservationDelete(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+class ReservationDelete(LoginRequiredMixin, UserPassesTestMixin, SuccessMessageMixin, DeleteView):
     model = Reservation
+    success_message = 'Reservation deleted successfully'
 
     def test_func(self):
         car_id = self.get_object().car.id
         return self.request.user.car_set.filter(pk=car_id).exists()
 
+    def delete(self, request, *args, **kwargs):
+        messages.success(self.request, self.success_message)
+        return super(ReservationDelete, self).delete(request, *args, **kwargs)
+
     def get_success_url(self):
         return reverse('reservation:calendar_car', kwargs={'pk': self.get_object().car.id})
 
 
-class ReservationAdd(LoginRequiredMixin, UserPassesTestMixin, CreateView):
+class ReservationAdd(LoginRequiredMixin, UserPassesTestMixin, SuccessMessageMixin, CreateView):
     template_name = 'reservation/reservation_detail.html'
     model = Reservation
     form_class = ReservationAddForm
+    success_message = 'Reservation saved successfully'
 
     def setup(self, request, *args, **kwargs):
         super().setup(request, *args, **kwargs)
@@ -134,10 +144,11 @@ class ReservationAdd(LoginRequiredMixin, UserPassesTestMixin, CreateView):
         return context
 
 
-class ChargingReservationDetail(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+class ChargingReservationDetail(LoginRequiredMixin, UserPassesTestMixin, SuccessMessageMixin, UpdateView):
     template_name = 'reservation/reservation_detail.html'
     model = ChargingReservation
     form_class = ChargingReservationDetailForm
+    success_message = 'Reservation saved successfully'
 
     def test_func(self):
         car_id = self.get_object().car.id
@@ -159,21 +170,27 @@ class ChargingReservationDetail(LoginRequiredMixin, UserPassesTestMixin, UpdateV
         return context
 
 
-class ChargingReservationDelete(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+class ChargingReservationDelete(LoginRequiredMixin, UserPassesTestMixin, SuccessMessageMixin, DeleteView):
     model = ChargingReservation
+    success_message = 'Reservation deleted successfully'
 
     def test_func(self):
         car_id = self.get_object().car.id
         return self.request.user.car_set.filter(pk=car_id).exists()
 
+    def delete(self, request, *args, **kwargs):
+        messages.success(self.request, self.success_message)
+        return super(ChargingReservationDelete, self).delete(request, *args, **kwargs)
+
     def get_success_url(self):
         return reverse('reservation:calendar_car', kwargs={'pk': self.get_object().car.id})
 
 
-class ChargingReservationAdd(LoginRequiredMixin, UserPassesTestMixin, CreateView):
+class ChargingReservationAdd(LoginRequiredMixin, UserPassesTestMixin, SuccessMessageMixin, CreateView):
     template_name = 'reservation/reservation_detail.html'
     model = ChargingReservation
     form_class = ChargingReservationAddForm
+    success_message = 'Reservation saved successfully'
 
     def setup(self, request, *args, **kwargs):
         super().setup(request, *args, **kwargs)

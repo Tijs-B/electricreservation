@@ -14,7 +14,10 @@
 
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.2/css/all.min.css"
-          integrity="sha256-BtbhCIbtfeVWGsqxk1vOHEYXS6qcvQvLMZqjtpWUEx8=" crossorigin="anonymous" />
+          integrity="sha256-BtbhCIbtfeVWGsqxk1vOHEYXS6qcvQvLMZqjtpWUEx8=" crossorigin="anonymous"/>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css"
+          integrity="sha256-HtCCUh9Hkh//8U1OwcbD8epVEUdBvuI8wj1KtqMhNkI=" crossorigin="anonymous"/>
 
     <!-- Custom CSS -->
     <link rel="stylesheet" type="text/css" href="{% static 'reservation/style.css' %}">
@@ -61,6 +64,33 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/2.2.0/js.cookie.min.js"
         integrity="sha256-9Nt2r+tJnSd2A2CRUvnjgsD+ES1ExvjbjBNqidm9doI=" crossorigin="anonymous"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mouse0270-bootstrap-notify/3.1.7/bootstrap-notify.min.js"
+        integrity="sha256-LlN0a0J3hMkDLO1mhcMwy+GIMbIRV7kvKHx4oCxNoxI=" crossorigin="anonymous"></script>
+
+{% if messages %}
+    <script>
+        {% for message in messages %}
+            $.notify({
+                message: '{{ message.message }}'
+            }, {
+                mouseover: 'pause',
+                type: '{{ message.level_tag }}'
+            });
+            {% if message.level_tag == 'debug' %}
+
+            {% elif message.level_tag == 'info' %}
+
+            {% elif message.level_tag == 'success' %}
+
+            {% elif message.level_tag == 'warning' %}
+
+            {% elif message.level_tag == 'error' %}
+
+            {% endif %}
+        {% endfor %}
+    </script>
+{% endif %}
 
 <!-- Custom script -->
 <script src="{% static 'reservation/utils.js' %}"></script>
