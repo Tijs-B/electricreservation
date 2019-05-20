@@ -56,7 +56,8 @@ class ReservationAddForm(forms.ModelForm):
             distance_left_at_last = self.car.get_distance_left(last_reservation.start_time)
             if distance_left_at_last - self.cleaned_data['distance'] < last_reservation.distance:
                 raise ValidationError(f"Making this reservation would mean that at least one other reservation would "
-                                      f"be cancelled, including a reservation to {last_reservation.location} made by "
+                                      f"be cancelled, including a reservation to "
+                                      f"{last_reservation.location.capitalize()} made by "
                                       f"{last_reservation.owner.username.capitalize()}")
 
 
