@@ -79,6 +79,7 @@ class ReservationDetail(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         kwargs = super().get_form_kwargs()
         kwargs['car'] = self.get_object().car
         kwargs['owner'] = self.get_object().owner
+        kwargs['id'] = self.get_object().id
         return kwargs
 
 
@@ -154,6 +155,7 @@ class ChargingReservationDetail(LoginRequiredMixin, UserPassesTestMixin, UpdateV
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs['car'] = self.get_object().car
+        kwargs['id'] = self.get_object().id
         return kwargs
 
 

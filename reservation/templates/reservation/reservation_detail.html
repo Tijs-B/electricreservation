@@ -117,5 +117,15 @@
                 updateDistanceLeft();
             }));
         {% endif %}
+
+        {% if reservation_type == 'charging_reservation' %}
+            $("#id_start_time").on('input', function(e) {
+                let date = new Date($("#id_start_time").val());
+                if (date.getTime()) {
+                    date.addHours({{ car.charging_time }});
+                    $("#id_end_time").val($.format.date(date, "yyyy-MM-dd HH:mm:ss"));
+                }
+            });
+        {% endif %}
     </script>
 {% endblock script %}

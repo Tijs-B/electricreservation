@@ -1,34 +1,12 @@
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit, Button
 from django import forms
-from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
-from django.db.models import Q
 
-from reservation.models import Car, Reservation, ChargingReservation
-
-
-class ReservationOverlapsMixin:
-    def clean(self):
-        start_time = self.cleaned_data['start_time']
-        end_time = self.cleaned_data['end_time']
-
-        overlaps_reservation = self.car.reservation_set \
-            .filter((Q(start_time__lt=start_time) & Q(end_time__gt=start_time))
-                    | (Q(start_time__lt=end_time) & Q(end_time__gt=end_time))) \
-            .exists()
-        if overlaps_reservation:
-            raise ValidationError("Reservation overlaps with another reservation")
-
-        overlaps_charging_reservation = self.car.chargingreservation_set \
-            .filter((Q(start_time__lt=start_time) & Q(end_time__gt=start_time))
-                    | (Q(start_time__lt=end_time) & Q(end_time__gt=end_time))) \
-            .exists()
-        if overlaps_charging_reservation:
-            raise ValidationError("Reservation overlaps with another charging reservation")
+from reservation.models import Reservation, ChargingReservation
 
 
-class ReservationAddForm(ReservationOverlapsMixin, forms.ModelForm):
+class ReservationAddForm(forms.ModelForm):
     class Meta:
         fields = ('description', 'distance', 'location', 'start_time', 'end_time', 'should_be_charged_fully',
                   'priority')
@@ -50,17 +28,39 @@ class ReservationAddForm(ReservationOverlapsMixin, forms.ModelForm):
         return instance
 
     def clean(self):
-        super().clean()
+        start_time = self.cleaned_data['start_time']
+        end_time = self.cleaned_data['end_time']
 
-        distance_left = self.car.get_distance_left(self.cleaned_data['start_tune'])
+        # Check start_time < end_time
+        if start_time >= end_time:
+            raise ValidationError("End time must come after start time")
+
+        # Check overlap
+        if not self.car.time_slot_free(start_time, end_time):
+            raise ValidationError("Reservation overlaps with another reservation")
+
+        # Check enough distance left
+        distance_left = self.car.get_distance_left(start_time)
         if distance_left < self.cleaned_data['distance']:
             raise ValidationError(f"The car doesn't have enough distance left (need {self.cleaned_data['distance']} "
                                   f"km, {distance_left} km left)")
 
-        # TODO: check if no other reservation would get in trouble
+        # Check no other reservations could get into trouble
+        next_charging_time = self.car.get_next_charging_time_after(end_time)
+        last_reservation = Reservation.objects \
+            .filter(start_time__gte=end_time, end_time__lte=next_charging_time) \
+            .order_by('-start_time') \
+            .first()
+
+        if last_reservation:
+            distance_left_at_last = self.car.get_distance_left(last_reservation.start_time)
+            if distance_left_at_last - self.cleaned_data['distance'] < last_reservation.distance:
+                raise ValidationError(f"Making this reservation would mean that at least one other reservation would "
+                                      f"be cancelled, including a reservation to {last_reservation.location} made by "
+                                      f"{last_reservation.owner.username.capitalize()}")
 
 
-class ReservationDetailForm(ReservationOverlapsMixin, forms.ModelForm):
+class ReservationDetailForm(forms.ModelForm):
     class Meta:
         fields = ('description', 'distance', 'location', 'start_time', 'end_time', 'should_be_charged_fully',
                   'priority')
@@ -69,6 +69,7 @@ class ReservationDetailForm(ReservationOverlapsMixin, forms.ModelForm):
     def __init__(self, *args, **kwargs):
         self.car = kwargs.pop('car')
         self.owner = kwargs.pop('owner')
+        self.id = kwargs.pop('id')
         super(ReservationDetailForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.add_input(Submit('submit', 'Update'))
@@ -76,20 +77,46 @@ class ReservationDetailForm(ReservationOverlapsMixin, forms.ModelForm):
                                      css_class='btn-danger'))
 
     def clean(self):
-        super().clean()
+        start_time = self.cleaned_data['start_time']
+        end_time = self.cleaned_data['end_time']
 
-        distance_left = self.car.get_distance_left(self.cleaned_data['start_tune'])
+        # Check start_time < end_time
+        if start_time >= end_time:
+            raise ValidationError("End time must come after start time")
+
+        # Check overlap
+        if not self.car.time_slot_free(start_time, end_time, exclude_reservation_id=self.id):
+            raise ValidationError("Reservation overlaps with another reservation")
+
+        # Check enough distance left
+        distance_left = self.car.get_distance_left(start_time, exclude_reservation_id=self.id)
         if distance_left < self.cleaned_data['distance']:
             raise ValidationError(f"The car doesn't have enough distance left (need {self.cleaned_data['distance']} "
                                   f"km, {distance_left} km left)")
 
-        # TODO: check if no other reservation would get in trouble
+        # Check no other reservations could get into trouble
+        next_charging_time = self.car.get_next_charging_time_after(end_time)
+        last_reservation = Reservation.objects.exclude(pk=self.id) \
+            .filter(start_time__gte=end_time, end_time__lte=next_charging_time) \
+            .order_by('-start_time') \
+            .first()
+
+        if last_reservation:
+            distance_left_at_last = self.car.get_distance_left(last_reservation.start_time,
+                                                               exclude_reservation_id=self.id)
+            if distance_left_at_last - self.cleaned_data['distance'] < last_reservation.distance:
+                raise ValidationError(f"Making this reservation would mean that at least one other reservation would "
+                                      f"be cancelled, including a reservation to {last_reservation.location} made by "
+                                      f"{last_reservation.owner.username.capitalize()}")
 
 
-class ChargingReservationAddForm(ReservationOverlapsMixin, forms.ModelForm):
+class ChargingReservationAddForm(forms.ModelForm):
     class Meta:
-        fields = ('start_time', 'end_time')
         model = ChargingReservation
+        fields = ('start_time', 'end_time')
+        widgets = {
+            'end_time': forms.TextInput(attrs={'readonly': True})
+        }
 
     def __init__(self, *args, **kwargs):
         self.car = kwargs.pop('car')
@@ -105,19 +132,34 @@ class ChargingReservationAddForm(ReservationOverlapsMixin, forms.ModelForm):
         return instance
 
     def clean(self):
-        super().clean()
+        start_time = self.cleaned_data['start_time']
+        end_time = self.cleaned_data['end_time']
+
+        # Check start_time < end_time
+        if start_time >= end_time:
+            raise ValidationError("End time must come after start time")
+
+        # Check overlap
+        if not self.car.time_slot_free(start_time, end_time):
+            raise ValidationError("Reservation overlaps with another reservation")
+
+        # Check charging time
         charging_time = self.cleaned_data['end_time'] - self.cleaned_data['start_time']
         if charging_time.total_seconds() < self.car.charging_time * 60 * 60:
             raise ValidationError(f"The car should charge for at least {self.car.charging_time} hours")
 
 
-class ChargingReservationDetailForm(ReservationOverlapsMixin, forms.ModelForm):
+class ChargingReservationDetailForm(forms.ModelForm):
     class Meta:
-        fields = ('start_time', 'end_time')
         model = ChargingReservation
+        fields = ('start_time', 'end_time')
+        widgets = {
+            'end_time': forms.TextInput(attrs={'readonly': True})
+        }
 
     def __init__(self, *args, **kwargs):
         self.car = kwargs.pop('car')
+        self.id = kwargs.pop('id')
         super(ChargingReservationDetailForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.add_input(Submit('submit', 'Update'))
@@ -125,7 +167,18 @@ class ChargingReservationDetailForm(ReservationOverlapsMixin, forms.ModelForm):
                                      css_class='btn-danger'))
 
     def clean(self):
-        super().clean()
+        start_time = self.cleaned_data['start_time']
+        end_time = self.cleaned_data['end_time']
+
+        # Check start_time < end_time
+        if start_time >= end_time:
+            raise ValidationError("End time must come after start time")
+
+        # Check overlap
+        if not self.car.time_slot_free(start_time, end_time, exclude_charging_reservation_id=self.id):
+            raise ValidationError("Reservation overlaps with another reservation")
+
+        # Check charging time
         charging_time = self.cleaned_data['end_time'] - self.cleaned_data['start_time']
         if charging_time.total_seconds() < self.car.charging_time * 60 * 60:
             raise ValidationError(f"The car should charge for at least {self.car.charging_time} hours")
