@@ -70,17 +70,18 @@ class ReservationDetail(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     def get_success_url(self):
         return reverse('reservation:calendar_car', kwargs={'pk': self.get_object().car.id})
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['reservation_type'] = 'reservation'
-        return context
-
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs['car'] = self.get_object().car
         kwargs['owner'] = self.get_object().owner
         kwargs['id'] = self.get_object().id
         return kwargs
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['car'] = self.get_object().car
+        context['reservation_type'] = 'reservation'
+        return context
 
 
 class ReservationDelete(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
@@ -95,7 +96,7 @@ class ReservationDelete(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
 
 class ReservationAdd(LoginRequiredMixin, UserPassesTestMixin, CreateView):
-    template_name = 'reservation/reservation_add.html'
+    template_name = 'reservation/reservation_detail.html'
     model = Reservation
     form_class = ReservationAddForm
 
@@ -147,16 +148,16 @@ class ChargingReservationDetail(LoginRequiredMixin, UserPassesTestMixin, UpdateV
     def get_success_url(self):
         return reverse('reservation:calendar_car', kwargs={'pk': self.get_object().car.id})
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['reservation_type'] = 'charging_reservation'
-        return context
-
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs['car'] = self.get_object().car
         kwargs['id'] = self.get_object().id
         return kwargs
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['reservation_type'] = 'charging_reservation'
+        return context
 
 
 class ChargingReservationDelete(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
@@ -171,7 +172,7 @@ class ChargingReservationDelete(LoginRequiredMixin, UserPassesTestMixin, DeleteV
 
 
 class ChargingReservationAdd(LoginRequiredMixin, UserPassesTestMixin, CreateView):
-    template_name = 'reservation/reservation_add.html'
+    template_name = 'reservation/reservation_detail.html'
     model = ChargingReservation
     form_class = ChargingReservationAddForm
 

@@ -47,6 +47,39 @@
     </li>
 {% endblock navbar %}
 
+{% block outer_body %}
+    <div class="modal" tabindex="-1" role="dialog" id="add-reservation-modal">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add reservation</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>
+                        <i id="add-reservation-spinner" class="fas fa-circle-notch fa-spin"></i>
+                        <span id="add-reservation-modal-body">
+                            The car has <b><span id="add-reservation-modal-distance"></span> km</b> left
+                            <span id="add-reservation-modal-time"></span>.
+                        </span>
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary mr-auto" data-dismiss="modal">Cancel</button>
+                    <a role="button" href="" class="btn btn-secondary" id="add-charging-reservation-button">
+                        Charge
+                    </a>
+                    <a role="button" href="" class="btn btn-primary" id="add-reservation-button">
+                        Book
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock outer_body %}
+
 {% block body %}
     <div class="row justify-content-between">
         <div class="col">
@@ -115,10 +148,38 @@
             height: 'parent',
 
             dateClick: function (dateClickInfo) {
-                window.open(
-                    '/car/' + currentCarId + '/reservation/add?time=' + (dateClickInfo.date.getTime() / 1000),
-                    "_self"
-                )
+                let clickedTime = dateClickInfo.date.getTime() / 1000;
+
+                $("#add-reservation-modal-body").hide();
+                $("#add-reservation-modal-time").text(
+                    'on ' + $.format.date(dateClickInfo.date, 'dd/MM/yyyy')
+                    + ' at ' + $.format.date(dateClickInfo.date, 'HH:mm'));
+
+                $("#add-reservation-spinner").show();
+
+                $("#add-charging-reservation-button").attr('href', '/car/' + currentCarId +
+                    '/charging_reservation/add?time=' + clickedTime);
+                $("#add-charging-reservation-button").prop('disabled', true);
+                $("#add-reservation-button").attr('href', '/car/' + currentCarId +
+                    '/reservation/add?time=' + clickedTime);
+                $("#add-reservation-button").prop('disabled', true);
+
+                $("#add-reservation-modal").modal('show');
+
+                $.ajax({
+                    dataType: 'json',
+                    type: 'get',
+                    url: '/api/car/' + currentCarId + '/distance_left/',
+                    data: {time: clickedTime},
+                    success: function (result) {
+                        let distance_left = result['distance_left'];
+                        $("#add-reservation-modal-distance").text(distance_left);
+                        $("#add-reservation-modal-body").show();
+                        $("#add-reservation-spinner").hide();
+                        $("#add-charging-reservation-button").prop('disabled', false);
+                        $("#add-reservation-button").prop('disabled', false);
+                    }
+                });
             },
 
             eventSources: [
