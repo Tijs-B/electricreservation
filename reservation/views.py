@@ -155,6 +155,7 @@ class ChargingReservationDetail(LoginRequiredMixin, UserPassesTestMixin, UpdateV
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['reservation_type'] = 'charging_reservation'
+        context['car'] = self.get_object().car
         return context
 
 
