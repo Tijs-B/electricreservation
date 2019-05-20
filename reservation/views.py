@@ -12,6 +12,7 @@ from django.urls import reverse
 from django.views import View
 from django.views.generic import UpdateView, CreateView, DeleteView
 from django.views.generic.detail import SingleObjectMixin, DetailView
+from django.utils.translation import gettext as _
 from rest_framework import generics
 
 from reservation.forms import ReservationDetailForm, ReservationAddForm, ChargingReservationAddForm, \
@@ -50,7 +51,7 @@ class CarConfig(LoginRequiredMixin, UserPassesTestMixin, SuccessMessageMixin, Up
     template_name = 'reservation/car_config.html'
     model = Car
     fields = ('name', 'summer_driving_range', 'winter_driving_range', 'charging_time')
-    success_message = 'Car saved successfully'
+    success_message = _('Car saved successfully')
 
     def get_success_url(self):
         return reverse('reservation:calendar_car', kwargs={'pk': self.kwargs['pk']})
@@ -63,7 +64,7 @@ class ReservationDetail(LoginRequiredMixin, UserPassesTestMixin, SuccessMessageM
     template_name = 'reservation/reservation_detail.html'
     model = Reservation
     form_class = ReservationDetailForm
-    success_message = 'Reservation saved successfully'
+    success_message = _('Reservation saved successfully')
 
     def test_func(self):
         car_id = self.get_object().car.id
@@ -88,7 +89,7 @@ class ReservationDetail(LoginRequiredMixin, UserPassesTestMixin, SuccessMessageM
 
 class ReservationDelete(LoginRequiredMixin, UserPassesTestMixin, SuccessMessageMixin, DeleteView):
     model = Reservation
-    success_message = 'Reservation deleted successfully'
+    success_message = _('Reservation deleted successfully')
 
     def test_func(self):
         car_id = self.get_object().car.id
@@ -106,7 +107,7 @@ class ReservationAdd(LoginRequiredMixin, UserPassesTestMixin, SuccessMessageMixi
     template_name = 'reservation/reservation_detail.html'
     model = Reservation
     form_class = ReservationAddForm
-    success_message = 'Reservation saved successfully'
+    success_message = _('Reservation saved successfully')
 
     def setup(self, request, *args, **kwargs):
         super().setup(request, *args, **kwargs)
@@ -148,7 +149,7 @@ class ChargingReservationDetail(LoginRequiredMixin, UserPassesTestMixin, Success
     template_name = 'reservation/reservation_detail.html'
     model = ChargingReservation
     form_class = ChargingReservationDetailForm
-    success_message = 'Reservation saved successfully'
+    success_message = _('Reservation saved successfully')
 
     def test_func(self):
         car_id = self.get_object().car.id
@@ -172,7 +173,7 @@ class ChargingReservationDetail(LoginRequiredMixin, UserPassesTestMixin, Success
 
 class ChargingReservationDelete(LoginRequiredMixin, UserPassesTestMixin, SuccessMessageMixin, DeleteView):
     model = ChargingReservation
-    success_message = 'Reservation deleted successfully'
+    success_message = _('Reservation deleted successfully')
 
     def test_func(self):
         car_id = self.get_object().car.id
@@ -190,7 +191,7 @@ class ChargingReservationAdd(LoginRequiredMixin, UserPassesTestMixin, SuccessMes
     template_name = 'reservation/reservation_detail.html'
     model = ChargingReservation
     form_class = ChargingReservationAddForm
-    success_message = 'Reservation saved successfully'
+    success_message = _('Reservation saved successfully')
 
     def setup(self, request, *args, **kwargs):
         super().setup(request, *args, **kwargs)

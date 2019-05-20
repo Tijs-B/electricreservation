@@ -1,4 +1,5 @@
 from django.urls import path
+from django.views.i18n import JavaScriptCatalog
 
 from . import views
 
@@ -24,5 +25,7 @@ urlpatterns = [
     path('api/car/<int:pk>/reservations/', views.APIReservationsList.as_view(), name='api_car_reservations'),
     path('api/car/<int:pk>/charging_reservations/', views.APIChargingReservationsList.as_view(),
          name='api_car_charging_reservations'),
-    path('api/car/<int:pk>/distance_left/', views.DistanceLeft.as_view(), name='api_car_distance_left')
+    path('api/car/<int:pk>/distance_left/', views.DistanceLeft.as_view(), name='api_car_distance_left'),
+
+    path('jsi18n/', JavaScriptCatalog.as_view(), name='javascript-catalog'),
 ]

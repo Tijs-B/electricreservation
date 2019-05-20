@@ -1,16 +1,17 @@
 {% extends 'reservation/base.html' %}
+{% load i18n %}
 
 {% load crispy_forms_tags %}
 
 {% block body %}
     <div class="row justify-content-center">
         <div class="col-md-8">
-            <h1 class="mt-2">Car Configuration</h1>
+            <h1 class="mt-2">{% trans 'Car Configuration' %}</h1>
 
             <form method="post">
                 {% csrf_token %}
                 {{ form|crispy }}
-                <button type="submit" class="btn btn-success">Update</button>
+                <button type="submit" class="btn btn-success">{% trans "Update" %}</button>
             </form>
         </div>
     </div>

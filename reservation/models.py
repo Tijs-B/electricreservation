@@ -6,11 +6,12 @@ from django.db import models
 from django.db.models import ExpressionWrapper, F, DurationField, Sum, Q
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.utils.translation import gettext as _
 
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    calendar_color = models.CharField(max_length=7)
+    calendar_color = models.CharField(_("Calendar color"), max_length=7)
 
     def __str__(self):
         return f"Profile for {self.user}"
@@ -28,12 +29,12 @@ def save_user_profile(sender, instance, **kwargs):
 
 
 class Car(models.Model):
-    name = models.CharField(max_length=200)
+    name = models.CharField(_("Name"), max_length=200)
 
-    summer_driving_range = models.PositiveIntegerField(verbose_name="Summer driving range (km)")
-    winter_driving_range = models.PositiveIntegerField(verbose_name="Winter driving range (km)")
+    summer_driving_range = models.PositiveIntegerField(_("Summer driving range"))
+    winter_driving_range = models.PositiveIntegerField(_("Winter driving range"))
 
-    charging_time = models.PositiveIntegerField(verbose_name="Charging time (in hours)")
+    charging_time = models.PositiveIntegerField(_("Charging time"))
 
     users = models.ManyToManyField(User)
 
@@ -115,25 +116,25 @@ class Car(models.Model):
 class Reservation(models.Model):
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
     car = models.ForeignKey(Car, on_delete=models.CASCADE)
-    description = models.CharField(max_length=200, default='', blank=True)
+    description = models.CharField(_("Description"), max_length=200, default='', blank=True)
 
-    distance = models.PositiveIntegerField(verbose_name="Distance (km)")
-    location = models.CharField(max_length=100)
+    distance = models.PositiveIntegerField(_("Distance"))
+    location = models.CharField(_("Location"), max_length=100)
 
-    start_time = models.DateTimeField()
-    end_time = models.DateTimeField()
+    start_time = models.DateTimeField(_("Start time"))
+    end_time = models.DateTimeField(_("End time"))
 
-    should_be_charged_fully = models.BooleanField(default=False)
+    should_be_charged_fully = models.BooleanField(_("Should be charged fully"), default=False)
 
     PRIORITY_LOW = 'L'
     PRIORITY_MEDIUM = 'M'
     PRIORITY_HIGH = 'H'
     PRIORITY_CHOICES = (
-        (PRIORITY_LOW, 'Low'),
-        (PRIORITY_MEDIUM, 'Medium'),
-        (PRIORITY_HIGH, 'High')
+        (PRIORITY_LOW, _('Low')),
+        (PRIORITY_MEDIUM, _('Medium')),
+        (PRIORITY_HIGH, _('High'))
     )
-    priority = models.CharField(choices=PRIORITY_CHOICES, max_length=1, default=PRIORITY_LOW, blank=True)
+    priority = models.CharField(_("Priority"), choices=PRIORITY_CHOICES, max_length=1, default=PRIORITY_LOW, blank=True)
 
     def __str__(self):
         return f"Reservation {self.start_time.strftime('%Y-%m-%d %H:%M')}" \
@@ -143,8 +144,8 @@ class Reservation(models.Model):
 
 class ChargingReservation(models.Model):
     car = models.ForeignKey(Car, on_delete=models.CASCADE)
-    start_time = models.DateTimeField()
-    end_time = models.DateTimeField()
+    start_time = models.DateTimeField(_("Start time"))
+    end_time = models.DateTimeField(_("End time"))
 
     def __str__(self):
         return f"Charging reservation {self.start_time.strftime('%Y-%m-%d %H:%M')}" \

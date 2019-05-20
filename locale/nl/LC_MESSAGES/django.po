@@ -1,0 +1,206 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-05-21 01:10+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: reservation/forms.py:39 reservation/forms.py:70 reservation/forms.py:106
+#: reservation/forms.py:144
+msgid "End time must come after start time"
+msgstr "Eindtijd moet na de starttijd komen"
+
+#: reservation/forms.py:43 reservation/forms.py:74 reservation/forms.py:110
+#: reservation/forms.py:148
+msgid "Reservation overlaps with another reservation"
+msgstr "Reservatie overlapt met een andere reservatie"
+
+#: reservation/forms.py:91
+msgid "Create"
+msgstr "Creëren"
+
+#: reservation/forms.py:115 reservation/forms.py:153
+#, python-format
+msgid "The car should charge for at least %(charging_time)s hours"
+msgstr "De auto moet ten minste %(charging_time)s uur opladen"
+
+#: reservation/forms.py:134
+#: reservation/templates/reservation/car_config.html:14
+msgid "Update"
+msgstr "Update"
+
+#: reservation/forms.py:135
+#: reservation/templates/reservation/reservation_detail.html:41
+#: reservation/templates/reservation/reservation_detail.html:46
+msgid "Delete"
+msgstr "Verwijder"
+
+#: reservation/models.py:14
+msgid "Calendar color"
+msgstr "Kalenderkleur"
+
+#: reservation/models.py:32
+msgid "Name"
+msgstr "Naam"
+
+#: reservation/models.py:34
+msgid "Summer driving range"
+msgstr "Rijbereik in de zomer"
+
+#: reservation/models.py:35
+msgid "Winter driving range"
+msgstr "Rijbereik in de winter"
+
+#: reservation/models.py:37
+msgid "Charging time"
+msgstr "Oplaadtijd"
+
+#: reservation/models.py:119
+msgid "Description"
+msgstr "Beschrijving"
+
+#: reservation/models.py:121
+msgid "Distance"
+msgstr "Afstand"
+
+#: reservation/models.py:122
+msgid "Location"
+msgstr "Locatie"
+
+#: reservation/models.py:124 reservation/models.py:147
+msgid "Start time"
+msgstr "Starttijd"
+
+#: reservation/models.py:125 reservation/models.py:148
+msgid "End time"
+msgstr "Eindtijd"
+
+#: reservation/models.py:127
+msgid "Should be charged fully"
+msgstr "Moet volledig opgeladen zijn"
+
+#: reservation/models.py:133
+msgid "Low"
+msgstr "Laag"
+
+#: reservation/models.py:134
+msgid "Medium"
+msgstr "Medium"
+
+#: reservation/models.py:135
+msgid "High"
+msgstr "Hoog"
+
+#: reservation/models.py:137
+msgid "Priority"
+msgstr "Prioriteit"
+
+#: reservation/templates/reservation/base.html:7
+#: reservation/templates/reservation/base.html:31
+msgid "Electric Reservation"
+msgstr "Electric Reservation"
+
+#: reservation/templates/reservation/base.html:39
+msgid "Logout"
+msgstr "Uitloggen"
+
+#: reservation/templates/reservation/calendar.html:56
+msgid "Add reservation"
+msgstr "Reservatie toevoegen"
+
+#: reservation/templates/reservation/calendar.html:57
+#: reservation/templates/reservation/reservation_detail.html:29
+msgid "Close"
+msgstr "Sluiten"
+
+#: reservation/templates/reservation/calendar.html:73
+#: reservation/templates/reservation/reservation_detail.html:37
+msgid "Cancel"
+msgstr "Annuleer"
+
+#: reservation/templates/reservation/calendar.html:80
+msgid "Charge"
+msgstr "Opladen"
+
+#: reservation/templates/reservation/calendar.html:84
+msgid "Book"
+msgstr "Reserveren"
+
+#: reservation/templates/reservation/calendar.html:104
+msgid "Today"
+msgstr "Vandaag"
+
+#: reservation/templates/reservation/calendar.html:108
+msgid "Previous"
+msgstr "Vorige"
+
+#: reservation/templates/reservation/calendar.html:112
+msgid "Next"
+msgstr "Volgende"
+
+#: reservation/templates/reservation/calendar.html:212
+msgid "Moving charging reservation failed: "
+msgstr "Oplaadreservatie verplaatsen mislukt: "
+
+#: reservation/templates/reservation/car_config.html:9
+msgid "Car Configuration"
+msgstr "Autoconfiguratie"
+
+#: reservation/templates/reservation/reservation_detail.html:10
+msgid "Reservation"
+msgstr "Reservatie"
+
+#: reservation/templates/reservation/reservation_detail.html:12
+msgid "Charging Reservation"
+msgstr "Opladen"
+
+#: reservation/templates/reservation/reservation_detail.html:28
+msgid "Confirm Deletion"
+msgstr "Bevestig verwijderen"
+
+#: reservation/templates/reservation/reservation_detail.html:34
+msgid "Are you sure you want to delete this reservation?"
+msgstr "Ben je zeker dat je deze reservatie wil verwijderen?"
+
+#: reservation/templates/reservation/reservation_detail.html:105
+#: reservation/templates/reservation/reservation_detail.html:109
+#, fuzzy, python-brace-format
+#| msgid "Warning! Just <b>{1} km</b> left at {2}."
+msgid "Warning! Just <b>{0} km</b> left at {1}."
+msgstr "Opgelet! Nog maar <b>{0} km</b> over op {1}."
+
+#: reservation/templates/reservation/reservation_detail.html:113
+#, fuzzy, python-brace-format
+#| msgid "The car has <b>{1} km</b> left at {2}."
+msgid "The car has <b>{0} km</b> left at {1}."
+msgstr "De auto heeft nog <b>{0} km </b> over op {1}."
+
+#: reservation/views.py:54
+msgid "Car saved successfully"
+msgstr "Auto opgeslagen"
+
+#: reservation/views.py:67 reservation/views.py:110 reservation/views.py:152
+#: reservation/views.py:194
+msgid "Reservation saved successfully"
+msgstr "Reservatie opgeslagen"
+
+#: reservation/views.py:92 reservation/views.py:176
+msgid "Reservation deleted successfully"
+msgstr "Reservatie verwijderd"
+
+#: templates/registration/login.html:9 templates/registration/login.html:14
+msgid "Login"
+msgstr "Inloggen"

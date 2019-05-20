@@ -2,6 +2,7 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit, Button
 from django import forms
 from django.core.exceptions import ValidationError
+from django.utils.translation import gettext as _
 
 from reservation.models import Reservation, ChargingReservation
 
@@ -35,11 +36,11 @@ class ReservationAddForm(forms.ModelForm):
 
         # Check start_time < end_time
         if start_time >= end_time:
-            raise ValidationError("End time must come after start time")
+            raise ValidationError(_("End time must come after start time"))
 
         # Check overlap
         if not self.car.time_slot_free(start_time, end_time):
-            raise ValidationError("Reservation overlaps with another reservation")
+            raise ValidationError(_("Reservation overlaps with another reservation"))
 
 
 class ReservationDetailForm(forms.ModelForm):
@@ -66,11 +67,11 @@ class ReservationDetailForm(forms.ModelForm):
 
         # Check start_time < end_time
         if start_time >= end_time:
-            raise ValidationError("End time must come after start time")
+            raise ValidationError(_("End time must come after start time"))
 
         # Check overlap
         if not self.car.time_slot_free(start_time, end_time, exclude_reservation_id=self.id):
-            raise ValidationError("Reservation overlaps with another reservation")
+            raise ValidationError(_("Reservation overlaps with another reservation"))
 
 
 class ChargingReservationAddForm(forms.ModelForm):
@@ -87,7 +88,7 @@ class ChargingReservationAddForm(forms.ModelForm):
         super(ChargingReservationAddForm, self).__init__(*args, **kwargs)
 
         self.helper = FormHelper()
-        self.helper.add_input(Submit('submit', 'Create'))
+        self.helper.add_input(Submit('submit', _('Create')))
 
     def save(self, commit=True):
         instance = super().save(commit=False)
@@ -102,16 +103,17 @@ class ChargingReservationAddForm(forms.ModelForm):
 
         # Check start_time < end_time
         if start_time >= end_time:
-            raise ValidationError("End time must come after start time")
+            raise ValidationError(_("End time must come after start time"))
 
         # Check overlap
         if not self.car.time_slot_free(start_time, end_time):
-            raise ValidationError("Reservation overlaps with another reservation")
+            raise ValidationError(_("Reservation overlaps with another reservation"))
 
         # Check charging time
         charging_time = self.cleaned_data['end_time'] - self.cleaned_data['start_time']
         if charging_time.total_seconds() < self.car.charging_time * 60 * 60:
-            raise ValidationError(f"The car should charge for at least {self.car.charging_time} hours")
+            raise ValidationError(_("The car should charge for at least %(charging_time)s hours" %
+                                    {'charging_time': self.car.charging_time}))
 
 
 class ChargingReservationDetailForm(forms.ModelForm):
@@ -129,8 +131,8 @@ class ChargingReservationDetailForm(forms.ModelForm):
         super(ChargingReservationDetailForm, self).__init__(*args, **kwargs)
 
         self.helper = FormHelper()
-        self.helper.add_input(Submit('submit', 'Update'))
-        self.helper.add_input(Button('delete', 'Delete', onclick="deleteReservation()",
+        self.helper.add_input(Submit('submit', _('Update')))
+        self.helper.add_input(Button('delete', _('Delete'), onclick="deleteReservation()",
                                      css_class='btn-danger'))
 
     def clean(self):
@@ -139,13 +141,14 @@ class ChargingReservationDetailForm(forms.ModelForm):
 
         # Check start_time < end_time
         if start_time >= end_time:
-            raise ValidationError("End time must come after start time")
+            raise ValidationError(_("End time must come after start time"))
 
         # Check overlap
         if not self.car.time_slot_free(start_time, end_time, exclude_charging_reservation_id=self.id):
-            raise ValidationError("Reservation overlaps with another reservation")
+            raise ValidationError(_("Reservation overlaps with another reservation"))
 
         # Check charging time
         charging_time = self.cleaned_data['end_time'] - self.cleaned_data['start_time']
         if charging_time.total_seconds() < self.car.charging_time * 60 * 60:
-            raise ValidationError(f"The car should charge for at least {self.car.charging_time} hours")
+            raise ValidationError(_("The car should charge for at least %(charging_time)s hours" %
+                                    {'charging_time': self.car.charging_time}))
