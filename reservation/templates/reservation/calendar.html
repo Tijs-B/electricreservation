@@ -68,9 +68,14 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary mr-auto" data-dismiss="modal">Cancel</button>
-                    <a role="button" href="" class="btn btn-secondary" id="add-charging-reservation-button">
-                        Charge
-                    </a>
+                    <form action="{% url 'reservation:charging_reservation_add' car.id %}" method="post">
+                        {% csrf_token %}
+                        <input type="hidden" id="charging-reservation-start-time" name="start_time">
+                        <input type="hidden" id="charging-reservation-end-time" name="end_time">
+                        <button type="submit" class="btn btn-secondary" id="add-charging-reservation-button">
+                            Charge
+                        </button>
+                    </form>
                     <a role="button" href="" class="btn btn-primary" id="add-reservation-button">
                         Book
                     </a>
@@ -158,12 +163,15 @@
 
                 $("#add-reservation-spinner").show();
 
-                $("#add-charging-reservation-button").attr('href', '/car/' + currentCarId +
-                    '/charging_reservation/add?time=' + clickedTime);
-                $("#add-charging-reservation-button").prop('disabled', true);
                 $("#add-reservation-button").attr('href', '/car/' + currentCarId +
                     '/reservation/add?time=' + clickedTime);
                 $("#add-reservation-button").prop('disabled', true);
+
+                $("#add-charging-reservation-button").prop('disabled', true);
+                $("#charging-reservation-start-time").val($.format.date(dateClickInfo.date, 'yyyy-MM-dd HH:mm:ss'));
+                let end_time = new Date(dateClickInfo.date.getTime());
+                end_time.addHours({{ car.charging_time }});
+                $("#charging-reservation-end-time").val($.format.date(end_time, 'yyyy-MM-dd HH:mm:ss'));
 
                 $("#add-reservation-modal").modal('show');
 
