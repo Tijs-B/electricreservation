@@ -15,7 +15,9 @@ class ReservationAddForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         self.car = kwargs.pop('car')
         self.owner = kwargs.pop('owner')
+
         super().__init__(*args, **kwargs)
+
         self.helper = FormHelper()
         self.helper.add_input(Submit('submit', 'Create'))
 
@@ -55,7 +57,7 @@ class ReservationAddForm(forms.ModelForm):
         if last_reservation:
             distance_left_at_last = self.car.get_distance_left(last_reservation.start_time)
             if distance_left_at_last - self.cleaned_data['distance'] < last_reservation.distance:
-                raise ValidationError(f"Making this reservation would mean that at least one other reservation would "
+                raise ValidationError(f"Booking this reservation would mean that at least one other reservation would "
                                       f"be cancelled, including a reservation to "
                                       f"{last_reservation.location.capitalize()} made by "
                                       f"{last_reservation.owner.username.capitalize()}")
@@ -71,7 +73,9 @@ class ReservationDetailForm(forms.ModelForm):
         self.car = kwargs.pop('car')
         self.owner = kwargs.pop('owner')
         self.id = kwargs.pop('id')
+
         super(ReservationDetailForm, self).__init__(*args, **kwargs)
+
         self.helper = FormHelper()
         self.helper.add_input(Submit('submit', 'Update'))
         self.helper.add_input(Button('delete', 'Delete', onclick="deleteReservation()",
@@ -106,7 +110,7 @@ class ReservationDetailForm(forms.ModelForm):
             distance_left_at_last = self.car.get_distance_left(last_reservation.start_time,
                                                                exclude_reservation_id=self.id)
             if distance_left_at_last - self.cleaned_data['distance'] < last_reservation.distance:
-                raise ValidationError(f"Making this reservation would mean that at least one other reservation would "
+                raise ValidationError(f"Booking this reservation would mean that at least one other reservation would "
                                       f"be cancelled, including a reservation to {last_reservation.location} made by "
                                       f"{last_reservation.owner.username.capitalize()}")
 
@@ -121,7 +125,9 @@ class ChargingReservationAddForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         self.car = kwargs.pop('car')
+
         super(ChargingReservationAddForm, self).__init__(*args, **kwargs)
+
         self.helper = FormHelper()
         self.helper.add_input(Submit('submit', 'Create'))
 
@@ -161,7 +167,9 @@ class ChargingReservationDetailForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         self.car = kwargs.pop('car')
         self.id = kwargs.pop('id')
+
         super(ChargingReservationDetailForm, self).__init__(*args, **kwargs)
+
         self.helper = FormHelper()
         self.helper.add_input(Submit('submit', 'Update'))
         self.helper.add_input(Button('delete', 'Delete', onclick="deleteReservation()",
@@ -183,3 +191,5 @@ class ChargingReservationDetailForm(forms.ModelForm):
         charging_time = self.cleaned_data['end_time'] - self.cleaned_data['start_time']
         if charging_time.total_seconds() < self.car.charging_time * 60 * 60:
             raise ValidationError(f"The car should charge for at least {self.car.charging_time} hours")
+
+        # Check if no other reservations could get into trouble
