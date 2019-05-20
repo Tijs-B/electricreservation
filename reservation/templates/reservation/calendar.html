@@ -114,6 +114,7 @@
 
 {% block script %}
     <script src="{% static 'reservation/fullcalendar/core/main.min.js' %}"></script>
+    <script src="{% static 'reservation/fullcalendar/core/locales-all.min.js' %}"></script>
     <script src="{% static 'reservation/fullcalendar/interaction/main.min.js' %}"></script>
     <script src="{% static 'reservation/fullcalendar/daygrid/main.min.js' %}"></script>
     <script src="{% static 'reservation/fullcalendar/timegrid/main.min.js' %}"></script>
@@ -147,7 +148,7 @@
                 hour: '2-digit',
                 minute: '2-digit'
             },
-            locale: 'be',
+            locale: 'nl',
             firstDay: 1,
             nowIndicator: true,
             height: 'parent',
