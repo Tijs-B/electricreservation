@@ -148,5 +148,4 @@ class ChargingReservation(models.Model):
 
     def __str__(self):
         return f"Charging reservation {self.start_time.strftime('%Y-%m-%d %H:%M')}" \
-            f"-{self.end_time.strftime('%H:%M')}" \
-            f" for {self.car} by {self.owner}"
+            f"-{self.end_time.strftime('%H:%M')} for {self.car}"
