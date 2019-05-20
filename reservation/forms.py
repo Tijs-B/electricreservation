@@ -104,6 +104,12 @@ class ChargingReservationAddForm(ReservationOverlapsMixin, forms.ModelForm):
             instance.save()
         return instance
 
+    def clean(self):
+        super().clean()
+        charging_time = self.cleaned_data['end_time'] - self.cleaned_data['start_time']
+        if charging_time.total_seconds() < self.car.charging_time * 60 * 60:
+            raise ValidationError(f"The car should charge for at least {self.car.charging_time} hours")
+
 
 class ChargingReservationDetailForm(ReservationOverlapsMixin, forms.ModelForm):
     class Meta:
@@ -117,3 +123,9 @@ class ChargingReservationDetailForm(ReservationOverlapsMixin, forms.ModelForm):
         self.helper.add_input(Submit('submit', 'Update'))
         self.helper.add_input(Button('delete', 'Delete', onclick="deleteReservation()",
                                      css_class='btn-danger'))
+
+    def clean(self):
+        super().clean()
+        charging_time = self.cleaned_data['end_time'] - self.cleaned_data['start_time']
+        if charging_time.total_seconds() < self.car.charging_time * 60 * 60:
+            raise ValidationError(f"The car should charge for at least {self.car.charging_time} hours")
