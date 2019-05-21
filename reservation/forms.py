@@ -9,8 +9,7 @@ from reservation.models import Reservation, ChargingReservation
 
 class ReservationAddForm(forms.ModelForm):
     class Meta:
-        fields = ('description', 'distance', 'location', 'start_time', 'end_time', 'should_be_charged_fully',
-                  'priority')
+        fields = ('description', 'distance', 'location', 'start_time', 'end_time', 'priority')
         model = Reservation
 
     def __init__(self, *args, **kwargs):
@@ -45,8 +44,7 @@ class ReservationAddForm(forms.ModelForm):
 
 class ReservationDetailForm(forms.ModelForm):
     class Meta:
-        fields = ('description', 'distance', 'location', 'start_time', 'end_time', 'should_be_charged_fully',
-                  'priority')
+        fields = ('description', 'distance', 'location', 'start_time', 'end_time', 'priority')
         model = Reservation
 
     def __init__(self, *args, **kwargs):
