@@ -3,13 +3,3 @@
     padding-bottom: 30px;
 }
 
-
-.not-enough-distance-left {
-    background: repeating-linear-gradient(
-      45deg,
-      #606dbc,
-      #606dbc 10px,
-      #465298 10px,
-      #465298 20px
-    );
-}
