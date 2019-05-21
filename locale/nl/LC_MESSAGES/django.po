@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-05-21 01:10+0200\n"
+"POT-Creation-Date: 2019-05-21 14:28+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -109,11 +109,11 @@ msgid "Priority"
 msgstr "Prioriteit"
 
 #: reservation/templates/reservation/base.html:7
-#: reservation/templates/reservation/base.html:31
+#: reservation/templates/reservation/base.html:33
 msgid "Electric Reservation"
 msgstr "Electric Reservation"
 
-#: reservation/templates/reservation/base.html:39
+#: reservation/templates/reservation/base.html:41
 msgid "Logout"
 msgstr "Uitloggen"
 
@@ -204,3 +204,6 @@ msgstr "Reservatie verwijderd"
 #: templates/registration/login.html:9 templates/registration/login.html:14
 msgid "Login"
 msgstr "Inloggen"
+
+#~ msgid "Not enough power left"
+#~ msgstr "Niet genoeg batterij meer"

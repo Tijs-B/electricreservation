@@ -26,11 +26,15 @@ class CarSerializer(serializers.ModelSerializer):
 
 class ReservationSerializer(serializers.ModelSerializer):
     owner = UserSerializer()
+    distance_left = serializers.SerializerMethodField()
+
+    def get_distance_left(self, reservation):
+        return reservation.car.get_distance_left(reservation.start_time)
 
     class Meta:
         model = Reservation
         fields = ('id', 'owner', 'car', 'description', 'distance', 'location', 'start_time', 'end_time',
-                  'should_be_charged_fully', 'priority')
+                  'should_be_charged_fully', 'priority', 'distance_left')
 
 
 class ChargingReservationSerializer(serializers.ModelSerializer):

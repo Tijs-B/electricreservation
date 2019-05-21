@@ -49,7 +49,7 @@
 {% endblock navbar %}
 
 {% block outer_body %}
-    <div class="modal" tabindex="-1" role="dialog" id="add-reservation-modal">
+    <div class="modal fade" tabindex="-1" role="dialog" id="add-reservation-modal">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -214,6 +214,22 @@
                 })
             },
 
+            eventRender: function(info) {
+                if (info.event.extendedProps.type === 'reservation') {
+                    if (! info.event.extendedProps.enoughDistanceLeft) {
+                        let oldBackgroundColor = info.el.style.backgroundColor;
+                        let lightBackgroundColor = chroma(oldBackgroundColor).brighten(0.5).hex();
+                        info.el.style.background = 'repeating-linear-gradient(' +
+                            '45deg,' +
+                            oldBackgroundColor + ',' +
+                            oldBackgroundColor + ' 10px,' +
+                            lightBackgroundColor + ' 10px,' +
+                            lightBackgroundColor + ' 20px' +
+                            ')';
+                    }
+                }
+            },
+
             eventSources: [
                 function (info, successCallback, failureCallback) {
                     $.ajax({
@@ -238,6 +254,10 @@
                                     title: capitalizeFirstLetter(e.owner.username) + '\n'
                                         + capitalizeFirstLetter(e.location) + ' · ' + e.distance + ' km \n',
                                     editable: false,
+                                    extendedProps: {
+                                        type: 'reservation',
+                                        enoughDistanceLeft: e.distance <= e.distance_left
+                                    },
                                 };
                                 calendarEvents.push(eventObject);
                             }
