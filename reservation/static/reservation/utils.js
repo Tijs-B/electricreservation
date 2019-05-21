@@ -19,11 +19,6 @@ function checkMobile() {
  */
 (function(b,c){var $=b.jQuery||b.Cowboy||(b.Cowboy={}),a;$.throttle=a=function(e,f,j,i){var h,d=0;if(typeof f!=="boolean"){i=j;j=f;f=c}function g(){var o=this,m=+new Date()-d,n=arguments;function l(){d=+new Date();j.apply(o,n)}function k(){h=c}if(i&&!h){l()}h&&clearTimeout(h);if(i===c&&m>e){l()}else{if(f!==true){h=setTimeout(i?k:l,i===c?e-m:e)}}}if($.guid){g.guid=j.guid=j.guid||$.guid++}return g};$.debounce=function(d,e,f){return f===c?a(d,e,false):a(d,f,e!==false)}})(this);
 
-Date.prototype.addHours = function(h) {
-   this.setTime(this.getTime() + (h*60*60*1000));
-   return this;
-};
-
 let csrftoken = Cookies.get('csrftoken');
 
 function csrfSafeMethod(method) {
@@ -40,13 +35,13 @@ $.ajaxSetup({
 
 $(function () {
   $('[data-toggle="tooltip"]').tooltip()
-})
+});
 
 // First, checks if it isn't implemented yet.
 if (!String.prototype.format) {
   String.prototype.format = function() {
     var args = arguments;
-    return this.replace(/{(\d+)}/g, function(match, number) {
+    return this.replace(/%(\d+)/g, function(match, number) {
       return typeof args[number] != 'undefined'
         ? args[number]
         : match
@@ -54,3 +49,4 @@ if (!String.prototype.format) {
     });
   };
 }
+

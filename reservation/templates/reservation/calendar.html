@@ -62,9 +62,9 @@
                     <p>
                         <i id="add-reservation-spinner" class="fas fa-circle-notch fa-spin"></i>
                         <span id="add-reservation-modal-body">
-{#                            TODO: translate this#}
-                            The car has <b><span id="add-reservation-modal-distance"></span> km</b> left
-                            <span id="add-reservation-modal-time"></span>.
+                            {% blocktrans trimmed %}
+                                The car has <b><span id="add-reservation-modal-distance"></span> km</b> left on
+                            {% endblocktrans %} <span id="add-reservation-modal-time"></span>.
                         </span>
                     </p>
                 </div>
@@ -165,10 +165,7 @@
                 let clickedTime = dateClickInfo.date.getTime() / 1000;
 
                 $("#add-reservation-modal-body").hide();
-                {# TODO: Translate this #}
-                $("#add-reservation-modal-time").text(
-                    'on ' + $.format.date(dateClickInfo.date, 'dd/MM/yyyy')
-                    + ' at ' + $.format.date(dateClickInfo.date, 'HH:mm'));
+                $("#add-reservation-modal-time").text(moment(dateClickInfo.date).format('LLLL'));
 
                 $("#add-reservation-spinner").show();
 
@@ -177,10 +174,10 @@
                 $("#add-reservation-button").prop('disabled', true);
 
                 $("#add-charging-reservation-button").prop('disabled', true);
-                $("#charging-reservation-start-time").val($.format.date(dateClickInfo.date, 'yyyy-MM-dd HH:mm:ss'));
-                let end_time = new Date(dateClickInfo.date.getTime());
-                end_time.addHours({{ car.charging_time }});
-                $("#charging-reservation-end-time").val($.format.date(end_time, 'yyyy-MM-dd HH:mm:ss'));
+                $("#charging-reservation-start-time").val(moment(dateClickInfo.date).format('YYYY-MM-DD HH:mm:ss'));
+                let end_time = moment(dateClickInfo.date);
+                end_time.add({{ car.charging_time }}, 'hours');
+                $("#charging-reservation-end-time").val(end_time.format('YYYY-MM-DD HH:mm:ss'));
 
                 $("#add-reservation-modal").modal('show');
 
@@ -205,8 +202,8 @@
                 $.ajax('/charging_reservation/' + newEvent.id + '/', {
                     method: 'post',
                     data: {
-                        'start_time': $.format.date(newEvent.start, 'yyyy-MM-dd HH:mm:ss'),
-                        'end_time': $.format.date(newEvent.end, 'yyyy-MM-dd HH:mm:ss'),
+                        'start_time': moment(newEvent.start).format('YYYY-MM-DD HH:mm:ss'),
+                        'end_time': moment(newEvent.end).format('YYYY-MM-DD HH:mm:ss'),
                     },
                     error: function(xhr) {
                         alert("{% trans 'Moving charging reservation failed: ' %}" + xhr.response);

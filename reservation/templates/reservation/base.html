@@ -38,6 +38,17 @@
     <ul class="navbar-nav ml-auto">
         <li class="nav-item">
             {% if user.is_authenticated %}
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="UserDropdown" role="button" data-toggle="dropdown"
+                       aria-haspopup="true" aria-expanded="false">
+                        {{ user.username|title }}
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
+                        <a href="#" class="dropdown-item"><b>{{ user.username|title }}</b></a>
+                        <div class="dropdown-divider"></div>
+                        <a href="{% url 'reservation:user_settings' %}" class="dropdown-item">{% trans 'Settings' %}</a>
+                    </div>
+                </li>
                 <a href="{% url 'logout' %}" class="nav-link">{% trans "Logout" %}</a>
             {% endif %}
         </li>
@@ -66,8 +77,9 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment-with-locales.min.js"
         integrity="sha256-AdQN98MVZs44Eq2yTwtoKufhnU+uZ7v2kXnD5vqzZVo=" crossorigin="anonymous"></script>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-dateFormat/1.0/jquery.dateFormat.min.js"
-        integrity="sha256-YVu3IT7nGTfxru7MQiv/TgOnffsbPuvXHRXuw1KzxWc=" crossorigin="anonymous"></script>
+<script>
+    moment.locale('{{ LANGUAGE_SETTING }}')
+</script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/2.2.0/js.cookie.min.js"
         integrity="sha256-9Nt2r+tJnSd2A2CRUvnjgsD+ES1ExvjbjBNqidm9doI=" crossorigin="anonymous"></script>

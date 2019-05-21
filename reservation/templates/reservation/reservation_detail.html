@@ -102,15 +102,15 @@
                             let div = $('#distance-alert');
                             if (distanceLeft < drivingRange * 0.3) {
                                 div.attr('class', 'alert alert-danger');
-                                div.html("{% blocktrans %}Warning! Just <b>{0} km</b> left at {1}.{% endblocktrans %}"
+                                div.html("{% blocktrans %}Warning! Just <b>%0 km</b> left at %1.{% endblocktrans %}"
                                     .format(distanceLeft, input_start_time.val()));
                             } else if (distanceLeft < drivingRange * 0.7) {
                                 div.attr('class', 'alert alert-warning');
-                                div.html("{% blocktrans %}Warning! Just <b>{0} km</b> left at {1}.{% endblocktrans %}"
+                                div.html("{% blocktrans %}Warning! Just <b>%0 km</b> left at %1.{% endblocktrans %}"
                                     .format(distanceLeft, input_start_time.val()));
                             } else {
                                 div.attr('class', 'alert alert-success');
-                                div.html("{% blocktrans %}The car has <b>{0} km</b> left at {1}.{% endblocktrans %}"
+                                div.html("{% blocktrans %}The car has <b>%0 km</b> left at %1.{% endblocktrans %}"
                                     .format(distanceLeft, input_start_time.val()));
                             }
                         }
