@@ -12,7 +12,7 @@ from django.utils.translation import gettext as _
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    calendar_color = models.CharField(_("Calendar color"), max_length=7)
+    calendar_color = models.CharField(_("Calendar color"), max_length=7, default='#0275d8')
 
     phone_regex = RegexValidator(regex=r'^\+\d{11}$',
                                  message=_("Phone number must be entered in the format: '+32496123456'"))
