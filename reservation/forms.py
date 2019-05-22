@@ -150,3 +150,15 @@ class ChargingReservationDetailForm(forms.ModelForm):
         if charging_time.total_seconds() < self.car.charging_time * 60 * 60:
             raise ValidationError(_("The car should charge for at least %(charging_time)s hours" %
                                     {'charging_time': self.car.charging_time}))
+
+
+class UserConfigForm(forms.Form):
+    email = forms.EmailField(label=_("Email address"))
+    phone_number = forms.CharField(label=_("Phone number"), max_length=12, required=False)
+
+    calendar_color = forms.CharField(label=_("Calendar color"), max_length=7)
+
+    def __init__(self, *args, **kwargs):
+        super(UserConfigForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.add_input(Submit('submit', _('Update')))

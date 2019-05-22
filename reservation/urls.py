@@ -11,6 +11,8 @@ urlpatterns = [
     path('calendar/<int:pk>/', views.CalendarCar.as_view(), name='calendar_car'),
     path('calendar/<int:pk>/config/', views.CarConfig.as_view(), name='calendar_car_config'),
 
+    path('user_settings/', views.UserSettings.as_view(), name='user_settings'),
+
     path('reservation/<int:pk>/', views.ReservationDetail.as_view(), name='reservation'),
     path('reservation/<int:pk>/delete/', views.ReservationDelete.as_view(), name='reservation_delete'),
     path('car/<int:car_id>/reservation/add/', views.ReservationAdd.as_view(), name='reservation_add'),

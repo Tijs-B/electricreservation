@@ -1,10 +1,28 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'reservation/base.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+{% load i18n %}
 
-</body>
-</html>
+{% block head %}
+    <link rel="stylesheet" href="{% static 'reservation/palette-color-picker/palette-color-picker.min.css' %}">
+{% endblock head %}
+
+{% block body %}
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <h1 class="mt-2">{% trans "User settings" %}</h1>
+            {% crispy form %}
+        </div>
+    </div>
+{% endblock body %}
+
+{% block script %}
+    <script src="{% static 'reservation/palette-color-picker/palette-color-picker.min.js' %}"></script>
+    <script>
+        $(function () {
+            $('[name="calendar_color"]').paletteColorPicker({
+                colors: {{ color_choices|safe }}
+            })
+        })
+    </script>
+{% endblock script %}

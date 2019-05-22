@@ -2,6 +2,7 @@ import datetime
 
 import dateutil
 from django.contrib.auth.models import User
+from django.core.validators import RegexValidator
 from django.db import models
 from django.db.models import ExpressionWrapper, F, DurationField, Sum, Q
 from django.db.models.signals import post_save
@@ -12,6 +13,10 @@ from django.utils.translation import gettext as _
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     calendar_color = models.CharField(_("Calendar color"), max_length=7)
+
+    phone_regex = RegexValidator(regex=r'^\+\d{11}$',
+                                 message=_("Phone number must be entered in the format: '+32496123456'"))
+    phone_number = models.CharField(_("Phone number"), validators=[phone_regex], max_length=12, blank=True)
 
     def __str__(self):
         return f"Profile for {self.user}"

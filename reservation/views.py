@@ -10,13 +10,13 @@ from django.http import JsonResponse
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.views import View
-from django.views.generic import UpdateView, CreateView, DeleteView
+from django.views.generic import UpdateView, CreateView, DeleteView, TemplateView, FormView
 from django.views.generic.detail import SingleObjectMixin, DetailView
 from django.utils.translation import gettext as _
 from rest_framework import generics
 
 from reservation.forms import ReservationDetailForm, ReservationAddForm, ChargingReservationAddForm, \
-    ChargingReservationDetailForm
+    ChargingReservationDetailForm, UserConfigForm
 from reservation.models import Car, Reservation, ChargingReservation
 from reservation.serializers import ReservationSerializer, ChargingReservationSerializer
 
@@ -32,6 +32,36 @@ def index(request):
 def calendar(request):
     default_car = Car.objects.filter(users__in=[request.user]).first()
     return redirect('reservation:calendar_car', pk=default_car.id)
+
+
+class UserSettings(LoginRequiredMixin, SuccessMessageMixin, FormView):
+    template_name = 'reservation/user_settings.html'
+    form_class = UserConfigForm
+    success_message = _('User settings saved successfully')
+
+    def get_success_url(self):
+        return reverse('reservation:calendar')
+
+    def get_initial(self):
+        initial = super().get_initial()
+        initial['email'] = self.request.user.email
+        initial['phone_number'] = self.request.user.profile.phone_number
+        initial['calendar_color'] = self.request.user.profile.calendar_color
+        return initial
+
+    def form_valid(self, form):
+        self.request.user.email = form.cleaned_data['email']
+        self.request.user.save()
+
+        self.request.user.profile.phone_number = form.cleaned_data['phone_number']
+        self.request.user.profile.calendar_color = form.cleaned_data['calendar_color']
+        self.request.user.profile.save()
+        return super().form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['color_choices'] = ['#0275d8', '#5cb85c', '#5bc0de', '#f0ad4e', '#d9534f']
+        return context
 
 
 class CalendarCar(LoginRequiredMixin, UserPassesTestMixin, DetailView):
