@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-05-21 15:44+0200\n"
+"POT-Creation-Date: 2019-05-22 13:41+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -37,7 +37,7 @@ msgstr "Creëren"
 msgid "The car should charge for at least %(charging_time)s hours"
 msgstr "De auto moet ten minste %(charging_time)s uur opladen"
 
-#: reservation/forms.py:132
+#: reservation/forms.py:132 reservation/forms.py:164
 #: reservation/templates/reservation/car_config.html:14
 msgid "Update"
 msgstr "Update"
@@ -48,7 +48,15 @@ msgstr "Update"
 msgid "Delete"
 msgstr "Verwijder"
 
-#: reservation/models.py:15
+#: reservation/forms.py:156
+msgid "Email address"
+msgstr "E-mailadres"
+
+#: reservation/forms.py:157 reservation/models.py:19
+msgid "Phone number"
+msgstr "Telefoonnummer"
+
+#: reservation/forms.py:159 reservation/models.py:15
 msgid "Calendar color"
 msgstr "Kalenderkleur"
 
@@ -202,16 +210,26 @@ msgstr "Opgelet! De auto kan nog maar <b>%%0 km</b> rijden op %%1."
 msgid "The car has <b>%%0 km</b> left at %%1."
 msgstr "De auto kan nog <b>%%0 km</b> rijden op %%1."
 
-#: reservation/views.py:59
+#: reservation/templates/reservation/user_settings.html:13
+msgid "User settings"
+msgstr "Gebruikersinstellingen"
+
+#: reservation/views.py:40
+#, fuzzy
+#| msgid "Reservation saved successfully"
+msgid "User settings saved successfully"
+msgstr "Reservatie opgeslagen"
+
+#: reservation/views.py:84
 msgid "Car saved successfully"
 msgstr "Auto opgeslagen"
 
-#: reservation/views.py:72 reservation/views.py:115 reservation/views.py:157
-#: reservation/views.py:199
+#: reservation/views.py:97 reservation/views.py:140 reservation/views.py:182
+#: reservation/views.py:224
 msgid "Reservation saved successfully"
 msgstr "Reservatie opgeslagen"
 
-#: reservation/views.py:97 reservation/views.py:181
+#: reservation/views.py:122 reservation/views.py:206
 msgid "Reservation deleted successfully"
 msgstr "Reservatie verwijderd"
 
