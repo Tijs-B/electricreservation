@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-05-22 16:56+0200\n"
+"POT-Creation-Date: 2019-05-23 00:43+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -35,6 +35,7 @@ msgstr "Er is automatisch een oplading toegevoegd op %(charging_time)s."
 
 #: reservation/forms.py:78 reservation/forms.py:167 reservation/forms.py:199
 #: reservation/templates/reservation/car_config.html:14
+#: templates/registration/password_change_form.html:14
 msgid "Update"
 msgstr "Update"
 
@@ -134,7 +135,12 @@ msgstr "Electric Reservation"
 msgid "Settings"
 msgstr "Instellingen"
 
-#: reservation/templates/reservation/base.html:52
+#: reservation/templates/reservation/base.html:50
+#: templates/registration/password_change_form.html:9
+msgid "Change password"
+msgstr "Wachtwoord wijzigen"
+
+#: reservation/templates/reservation/base.html:53
 msgid "Logout"
 msgstr "Uitloggen"
 
@@ -182,11 +188,10 @@ msgstr "Volgende"
 
 #: reservation/templates/reservation/calendar.html:209
 msgid "Moving charging reservation failed: "
-msgstr "Oplaadreservatie verplaatsen mislukt: "
+msgstr "Oplading verplaatsen mislukt: "
 
 #. Translators: Charging reservation title
-#: reservation/templates/reservation/calendar.html:285
-#| msgid "Charging"
+#: reservation/templates/reservation/calendar.html:294
 msgid "Charging"
 msgstr "Opladen"
 
@@ -226,29 +231,33 @@ msgid "User settings"
 msgstr "Gebruikersinstellingen"
 
 #: reservation/views.py:40
-#| msgid "Reservation saved successfully"
 msgid "User settings saved successfully."
-msgstr "Reservatie opgeslagen."
+msgstr "Gebruikersinstellingen opgeslagen."
 
 #: reservation/views.py:84
-#| msgid "Car saved successfully"
 msgid "Car saved successfully."
 msgstr "Auto opgeslagen."
 
 #: reservation/views.py:97 reservation/views.py:141 reservation/views.py:184
 #: reservation/views.py:226
-#| msgid "Reservation saved successfully"
 msgid "Reservation saved successfully."
 msgstr "Reservatie opgeslagen."
 
 #: reservation/views.py:123 reservation/views.py:208
-#| msgid "Reservation deleted successfully"
 msgid "Reservation deleted successfully."
 msgstr "Reservatie verwijderd."
 
 #: templates/registration/login.html:9 templates/registration/login.html:14
 msgid "Login"
 msgstr "Inloggen"
+
+#: templates/registration/password_change_done.html:9
+msgid "Successfully changed password"
+msgstr "Wachtwoord wijzigen gelukt"
+
+#: templates/registration/password_change_done.html:10
+msgid "Back to main menu"
+msgstr "Terug naar hoofdmenu"
 
 #~ msgid "Not enough power left"
 #~ msgstr "Niet genoeg batterij meer"
