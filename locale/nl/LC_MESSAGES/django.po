@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-05-22 15:20+0200\n"
+"POT-Creation-Date: 2019-05-22 16:56+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,50 +18,50 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: reservation/forms.py:42 reservation/forms.py:88 reservation/forms.py:124
-#: reservation/forms.py:162
+#: reservation/forms.py:42 reservation/forms.py:88 reservation/forms.py:139
+#: reservation/forms.py:177
 msgid "End time must come after start time"
 msgstr "Eindtijd moet na de starttijd komen"
 
-#: reservation/forms.py:46 reservation/forms.py:92 reservation/forms.py:128
-#: reservation/forms.py:166
+#: reservation/forms.py:46 reservation/forms.py:92 reservation/forms.py:143
+#: reservation/forms.py:181
 msgid "Reservation overlaps with another reservation"
 msgstr "Reservatie overlapt met een andere reservatie"
 
-#: reservation/forms.py:59
+#: reservation/forms.py:59 reservation/forms.py:105
 #, python-format
 msgid "We automatically added a charging reservation at %(charging_time)s."
 msgstr "Er is automatisch een oplading toegevoegd op %(charging_time)s."
 
-#: reservation/forms.py:109
-msgid "Create"
-msgstr "Creëren"
-
-#: reservation/forms.py:133 reservation/forms.py:171
-#, python-format
-msgid "The car should charge for at least %(charging_time)s hours"
-msgstr "De auto moet ten minste %(charging_time)s uur opladen"
-
-#: reservation/forms.py:152 reservation/forms.py:184
+#: reservation/forms.py:78 reservation/forms.py:167 reservation/forms.py:199
 #: reservation/templates/reservation/car_config.html:14
 msgid "Update"
 msgstr "Update"
 
-#: reservation/forms.py:153
+#: reservation/forms.py:79 reservation/forms.py:168
 #: reservation/templates/reservation/reservation_detail.html:41
 #: reservation/templates/reservation/reservation_detail.html:46
 msgid "Delete"
 msgstr "Verwijder"
 
-#: reservation/forms.py:176
+#: reservation/forms.py:124
+msgid "Create"
+msgstr "Creëren"
+
+#: reservation/forms.py:148 reservation/forms.py:186
+#, python-format
+msgid "The car should charge for at least %(charging_time)s hours"
+msgstr "De auto moet ten minste %(charging_time)s uur opladen"
+
+#: reservation/forms.py:191
 msgid "Email address"
 msgstr "E-mailadres"
 
-#: reservation/forms.py:177 reservation/models.py:19
+#: reservation/forms.py:192 reservation/models.py:19
 msgid "Phone number"
 msgstr "Telefoonnummer"
 
-#: reservation/forms.py:179 reservation/models.py:15
+#: reservation/forms.py:194 reservation/models.py:15
 msgid "Calendar color"
 msgstr "Kalenderkleur"
 
@@ -183,6 +183,12 @@ msgstr "Volgende"
 #: reservation/templates/reservation/calendar.html:209
 msgid "Moving charging reservation failed: "
 msgstr "Oplaadreservatie verplaatsen mislukt: "
+
+#. Translators: Charging reservation title
+#: reservation/templates/reservation/calendar.html:285
+#| msgid "Charging"
+msgid "Charging"
+msgstr "Opladen"
 
 #: reservation/templates/reservation/car_config.html:9
 msgid "Car Configuration"
