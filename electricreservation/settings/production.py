@@ -4,7 +4,7 @@ from django.core.exceptions import ImproperlyConfigured
 
 from .base import *
 
-with open(os.environ.get('MYSITE_CONFIG')) as f:
+with open('secret.json') as f:
     configs = json.loads(f.read())
 
 
