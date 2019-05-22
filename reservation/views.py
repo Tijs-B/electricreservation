@@ -37,7 +37,7 @@ def calendar(request):
 class UserSettings(LoginRequiredMixin, SuccessMessageMixin, FormView):
     template_name = 'reservation/user_settings.html'
     form_class = UserConfigForm
-    success_message = _('User settings saved successfully')
+    success_message = _('User settings saved successfully.')
 
     def get_success_url(self):
         return reverse('reservation:calendar')
@@ -81,7 +81,7 @@ class CarConfig(LoginRequiredMixin, UserPassesTestMixin, SuccessMessageMixin, Up
     template_name = 'reservation/car_config.html'
     model = Car
     fields = ('name', 'summer_driving_range', 'winter_driving_range', 'charging_time')
-    success_message = _('Car saved successfully')
+    success_message = _('Car saved successfully.')
 
     def get_success_url(self):
         return reverse('reservation:calendar_car', kwargs={'pk': self.kwargs['pk']})
@@ -94,7 +94,7 @@ class ReservationDetail(LoginRequiredMixin, UserPassesTestMixin, SuccessMessageM
     template_name = 'reservation/reservation_detail.html'
     model = Reservation
     form_class = ReservationDetailForm
-    success_message = _('Reservation saved successfully')
+    success_message = _('Reservation saved successfully.')
 
     def test_func(self):
         car_id = self.get_object().car.id
@@ -108,6 +108,7 @@ class ReservationDetail(LoginRequiredMixin, UserPassesTestMixin, SuccessMessageM
         kwargs['car'] = self.get_object().car
         kwargs['owner'] = self.get_object().owner
         kwargs['id'] = self.get_object().id
+        kwargs['request'] = self.request
         return kwargs
 
     def get_context_data(self, **kwargs):
@@ -119,7 +120,7 @@ class ReservationDetail(LoginRequiredMixin, UserPassesTestMixin, SuccessMessageM
 
 class ReservationDelete(LoginRequiredMixin, UserPassesTestMixin, SuccessMessageMixin, DeleteView):
     model = Reservation
-    success_message = _('Reservation deleted successfully')
+    success_message = _('Reservation deleted successfully.')
 
     def test_func(self):
         car_id = self.get_object().car.id
@@ -137,7 +138,7 @@ class ReservationAdd(LoginRequiredMixin, UserPassesTestMixin, SuccessMessageMixi
     template_name = 'reservation/reservation_detail.html'
     model = Reservation
     form_class = ReservationAddForm
-    success_message = _('Reservation saved successfully')
+    success_message = _('Reservation saved successfully.')
 
     def setup(self, request, *args, **kwargs):
         super().setup(request, *args, **kwargs)
@@ -166,6 +167,7 @@ class ReservationAdd(LoginRequiredMixin, UserPassesTestMixin, SuccessMessageMixi
         kwargs = super().get_form_kwargs()
         kwargs['car'] = self.car
         kwargs['owner'] = self.request.user
+        kwargs['request'] = self.request
         return kwargs
 
     def get_context_data(self, **kwargs):
@@ -179,7 +181,7 @@ class ChargingReservationDetail(LoginRequiredMixin, UserPassesTestMixin, Success
     template_name = 'reservation/reservation_detail.html'
     model = ChargingReservation
     form_class = ChargingReservationDetailForm
-    success_message = _('Reservation saved successfully')
+    success_message = _('Reservation saved successfully.')
 
     def test_func(self):
         car_id = self.get_object().car.id
@@ -203,7 +205,7 @@ class ChargingReservationDetail(LoginRequiredMixin, UserPassesTestMixin, Success
 
 class ChargingReservationDelete(LoginRequiredMixin, UserPassesTestMixin, SuccessMessageMixin, DeleteView):
     model = ChargingReservation
-    success_message = _('Reservation deleted successfully')
+    success_message = _('Reservation deleted successfully.')
 
     def test_func(self):
         car_id = self.get_object().car.id
@@ -221,7 +223,7 @@ class ChargingReservationAdd(LoginRequiredMixin, UserPassesTestMixin, SuccessMes
     template_name = 'reservation/reservation_detail.html'
     model = ChargingReservation
     form_class = ChargingReservationAddForm
-    success_message = _('Reservation saved successfully')
+    success_message = _('Reservation saved successfully.')
 
     def setup(self, request, *args, **kwargs):
         super().setup(request, *args, **kwargs)

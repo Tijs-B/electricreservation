@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-05-22 13:41+0200\n"
+"POT-Creation-Date: 2019-05-22 15:20+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,45 +18,50 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: reservation/forms.py:38 reservation/forms.py:68 reservation/forms.py:104
-#: reservation/forms.py:142
+#: reservation/forms.py:42 reservation/forms.py:88 reservation/forms.py:124
+#: reservation/forms.py:162
 msgid "End time must come after start time"
 msgstr "Eindtijd moet na de starttijd komen"
 
-#: reservation/forms.py:42 reservation/forms.py:72 reservation/forms.py:108
-#: reservation/forms.py:146
+#: reservation/forms.py:46 reservation/forms.py:92 reservation/forms.py:128
+#: reservation/forms.py:166
 msgid "Reservation overlaps with another reservation"
 msgstr "Reservatie overlapt met een andere reservatie"
 
-#: reservation/forms.py:89
+#: reservation/forms.py:59
+#, python-format
+msgid "We automatically added a charging reservation at %(charging_time)s."
+msgstr "Er is automatisch een oplading toegevoegd op %(charging_time)s."
+
+#: reservation/forms.py:109
 msgid "Create"
 msgstr "Creëren"
 
-#: reservation/forms.py:113 reservation/forms.py:151
+#: reservation/forms.py:133 reservation/forms.py:171
 #, python-format
 msgid "The car should charge for at least %(charging_time)s hours"
 msgstr "De auto moet ten minste %(charging_time)s uur opladen"
 
-#: reservation/forms.py:132 reservation/forms.py:164
+#: reservation/forms.py:152 reservation/forms.py:184
 #: reservation/templates/reservation/car_config.html:14
 msgid "Update"
 msgstr "Update"
 
-#: reservation/forms.py:133
+#: reservation/forms.py:153
 #: reservation/templates/reservation/reservation_detail.html:41
 #: reservation/templates/reservation/reservation_detail.html:46
 msgid "Delete"
 msgstr "Verwijder"
 
-#: reservation/forms.py:156
+#: reservation/forms.py:176
 msgid "Email address"
 msgstr "E-mailadres"
 
-#: reservation/forms.py:157 reservation/models.py:19
+#: reservation/forms.py:177 reservation/models.py:19
 msgid "Phone number"
 msgstr "Telefoonnummer"
 
-#: reservation/forms.py:159 reservation/models.py:15
+#: reservation/forms.py:179 reservation/models.py:15
 msgid "Calendar color"
 msgstr "Kalenderkleur"
 
@@ -80,43 +85,43 @@ msgstr "Rijbereik in de winter"
 msgid "Charging time"
 msgstr "Oplaadtijd"
 
-#: reservation/models.py:124
+#: reservation/models.py:145
 msgid "Description"
 msgstr "Beschrijving"
 
-#: reservation/models.py:126
+#: reservation/models.py:147
 msgid "Distance"
 msgstr "Afstand"
 
-#: reservation/models.py:127
+#: reservation/models.py:148
 msgid "Location"
 msgstr "Locatie"
 
-#: reservation/models.py:129 reservation/models.py:152
+#: reservation/models.py:150 reservation/models.py:179
 msgid "Start time"
 msgstr "Starttijd"
 
-#: reservation/models.py:130 reservation/models.py:153
+#: reservation/models.py:151 reservation/models.py:180
 msgid "End time"
 msgstr "Eindtijd"
 
-#: reservation/models.py:132
+#: reservation/models.py:153
 msgid "Should be charged fully"
 msgstr "Moet volledig opgeladen zijn"
 
-#: reservation/models.py:138
+#: reservation/models.py:159
 msgid "Low"
 msgstr "Laag"
 
-#: reservation/models.py:139
+#: reservation/models.py:160
 msgid "Medium"
 msgstr "Medium"
 
-#: reservation/models.py:140
+#: reservation/models.py:161
 msgid "High"
 msgstr "Hoog"
 
-#: reservation/models.py:142
+#: reservation/models.py:163
 msgid "Priority"
 msgstr "Prioriteit"
 
@@ -127,7 +132,7 @@ msgstr "Electric Reservation"
 
 #: reservation/templates/reservation/base.html:49
 msgid "Settings"
-msgstr ""
+msgstr "Instellingen"
 
 #: reservation/templates/reservation/base.html:52
 msgid "Logout"
@@ -217,21 +222,27 @@ msgstr "Gebruikersinstellingen"
 #: reservation/views.py:40
 #, fuzzy
 #| msgid "Reservation saved successfully"
-msgid "User settings saved successfully"
-msgstr "Reservatie opgeslagen"
+msgid "User settings saved successfully."
+msgstr "Reservatie opgeslagen."
 
 #: reservation/views.py:84
-msgid "Car saved successfully"
-msgstr "Auto opgeslagen"
+#, fuzzy
+#| msgid "Car saved successfully"
+msgid "Car saved successfully."
+msgstr "Auto opgeslagen."
 
-#: reservation/views.py:97 reservation/views.py:140 reservation/views.py:182
-#: reservation/views.py:224
-msgid "Reservation saved successfully"
-msgstr "Reservatie opgeslagen"
+#: reservation/views.py:97 reservation/views.py:141 reservation/views.py:184
+#: reservation/views.py:226
+#, fuzzy
+#| msgid "Reservation saved successfully"
+msgid "Reservation saved successfully."
+msgstr "Reservatie opgeslagen."
 
-#: reservation/views.py:122 reservation/views.py:206
-msgid "Reservation deleted successfully"
-msgstr "Reservatie verwijderd"
+#: reservation/views.py:123 reservation/views.py:208
+#, fuzzy
+#| msgid "Reservation deleted successfully"
+msgid "Reservation deleted successfully."
+msgstr "Reservatie verwijderd."
 
 #: templates/registration/login.html:9 templates/registration/login.html:14
 msgid "Login"

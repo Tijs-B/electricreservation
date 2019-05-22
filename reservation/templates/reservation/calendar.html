@@ -245,7 +245,7 @@
                                     id: e.id,
                                     start: new Date(e.start_time),
                                     end: new Date(e.end_time),
-                                    url: '/reservation/' + e.id,
+                                    url: '/reservation/' + e.id + '/',
                                     backgroundColor: e.owner.profile.calendar_color,
                                     borderColor: e.owner.profile.calendar_color,
                                     title: capitalizeFirstLetter(e.owner.username) + ' · '
@@ -278,7 +278,7 @@
                                     id: e.id,
                                     start: new Date(e.start_time),
                                     end: new Date(e.end_time),
-                                    url: '/charging_reservation/' + e.id,
+                                    url: '/charging_reservation/' + e.id + '/',
                                     backgroundColor: '#868e96',
                                     borderColor: '#868e96',
                                     title: 'Charging',

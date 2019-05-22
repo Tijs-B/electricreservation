@@ -51,9 +51,8 @@ class Car(models.Model):
         if exclude_reservation_id is not None:
             reservation_queryset = reservation_queryset.exclude(pk=exclude_reservation_id)
 
-        overlaps_reservation = reservation_queryset.exclude(pk=self.id) \
-            .filter((Q(start_time__lte=start_time) & Q(end_time__gt=start_time))
-                    | (Q(start_time__lt=end_time) & Q(end_time__gte=end_time))) \
+        overlaps_reservation = reservation_queryset \
+            .filter(Q(start_time__lt=end_time) & Q(end_time__gt=start_time)) \
             .exists()
         if overlaps_reservation:
             return False
@@ -63,8 +62,7 @@ class Car(models.Model):
             charging_reservation_queryset = charging_reservation_queryset.exclude(pk=exclude_charging_reservation_id)
 
         overlaps_charging_reservation = charging_reservation_queryset \
-            .filter((Q(start_time__lt=start_time) & Q(end_time__gt=start_time))
-                    | (Q(start_time__lt=end_time) & Q(end_time__gt=end_time))) \
+            .filter(Q(start_time__lt=end_time) & Q(end_time__gt=start_time)) \
             .exists()
         if overlaps_charging_reservation:
             return False
@@ -117,6 +115,29 @@ class Car(models.Model):
 
         return self.get_driving_range(time) - distance_driven
 
+    def find_charging_slot(self, time, exclude_reservation_id=None):
+        if self.get_distance_left(time) == self.get_driving_range(time):
+            return None
+
+        last_charging_time = self.get_last_charging_time_before(time)
+        min_search_time = time - datetime.timedelta(days=3)  # search max 3 days in the past
+
+        # Round time down to half hour and subtract another half hour for spacing
+        dt_start_of_hour = time.replace(minute=0, second=0, microsecond=0)
+        dt_half_hour = time.replace(minute=30, second=0, microsecond=0)
+        if time >= dt_half_hour:
+            current_end_time = dt_half_hour
+        else:
+            current_end_time = dt_start_of_hour
+
+        current_start_time = current_end_time - datetime.timedelta(hours=self.charging_time)
+        while current_start_time > last_charging_time and current_start_time > min_search_time:
+            if self.time_slot_free(current_start_time, current_end_time, exclude_reservation_id=exclude_reservation_id):
+                return current_start_time - datetime.timedelta(minutes=30)
+            current_start_time = current_start_time - datetime.timedelta(minutes=30)
+            current_end_time = current_end_time - datetime.timedelta(minutes=30)
+        return None
+
 
 class Reservation(models.Model):
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -146,6 +167,12 @@ class Reservation(models.Model):
             f"-{self.end_time.strftime('%H:%M')}" \
             f" for {self.car} by {self.owner}"
 
+    class Meta:
+        indexes = [
+            models.Index(fields=['start_time']),
+            models.Index(fields=['end_time']),
+        ]
+
 
 class ChargingReservation(models.Model):
     car = models.ForeignKey(Car, on_delete=models.CASCADE)
@@ -155,3 +182,9 @@ class ChargingReservation(models.Model):
     def __str__(self):
         return f"Charging reservation {self.start_time.strftime('%Y-%m-%d %H:%M')}" \
             f"-{self.end_time.strftime('%H:%M')} for {self.car}"
+
+    class Meta:
+        indexes = [
+            models.Index(fields=['start_time']),
+            models.Index(fields=['end_time']),
+        ]
