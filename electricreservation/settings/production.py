@@ -22,9 +22,9 @@ def get_env_var(setting, configs=configs):
 
 
 SECRET_KEY = get_env_var("SECRET_KEY")
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ['rpi-tijs.duckdns.org']
+ALLOWED_HOSTS = ['192.168.1.157', 'rpi-tijs.duckdns.org', 'raspberry']
 
 
 DATABASES = {
