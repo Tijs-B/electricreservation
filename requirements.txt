@@ -2,3 +2,4 @@ django
 django-rest-framework
 django-crispy-forms
 python-dateutil
+psycopg2

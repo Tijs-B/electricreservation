@@ -39,4 +39,4 @@ DATABASES = {
 }
 
 STATIC_URL = '/static/'
-STATIC_ROOT = '/var/www/vhosts/electricreservation/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
