@@ -25,3 +25,15 @@ SECRET_KEY = get_env_var("SECRET_KEY")
 DEBUG = False
 
 ALLOWED_HOSTS = ['rpi-tijs.duckdns.org']
+
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'electricreservation',
+        'USER': 'electricreservationuser',
+        'PASSWORD': get_env_var("POSTGRESQL_PASSWORD"),
+        'HOST': 'localhost',
+        'PORT': '',
+    }
+}
