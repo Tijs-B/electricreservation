@@ -54,30 +54,34 @@
 {% endblock outer_body %}
 
 {% block head %}
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pickerjs@1.2.1/dist/picker.min.css"
-          integrity="sha256-Rbg3v/C7NqiVTWBxzR5iWrm8qv3TLhG7M+r5M8L73TY=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 {% endblock head %}
 
 {% block script %}
-    <script src="https://cdn.jsdelivr.net/npm/pickerjs@1.2.1/dist/picker.min.js"
-            integrity="sha256-yMIn2/F+otyl7rKx6Z49VTlJxrg/wGFBLKqO2eRHkPg=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
 
     <script>
         let input_start_time = $("#id_start_time");
         let input_end_time = $("#id_end_time");
 
-        if (checkMobile()) {
-            let start_picker = new Picker(input_start_time.get(0), {
-                controls: true,
-                headers: true,
-                format: "YYYY-MM-DD HH:mm:ss"
-            });
-            let end_picker = new Picker(input_end_time.get(0), {
-                controls: true,
-                headers: true,
-                format: "YYYY-MM-DD HH:mm:ss"
-            });
-        }
+        input_start_time.addClass('flatpickr');
+        input_start_time.addClass('flatpickr-input');
+        input_end_time.addClass('flatpickr');
+        input_end_time.addClass('flatpickr-input');
+
+        flatpickr(input_start_time.get(0), {
+            dateFormat: "d-m-Y H:i:S",
+            {#enableTime: true,#}
+            disableMobile: "true",
+            defaultData: moment(input_start_time.val()).toISOString()
+        });
+        flatpickr(input_end_time.get(0), {
+            dateFormat: "d-m-Y H:i:S",
+            {#enableTime: true,#}
+            disableMobile: "true",
+            defaultData: moment(input_end_time.val()).toISOString()
+        });
 
         function deleteReservation() {
             $("#confirmDeletionModal").modal('toggle');
