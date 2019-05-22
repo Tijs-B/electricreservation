@@ -1,6 +1,7 @@
 .idea/
 electricreservation/settings/secret.json
 electricreservationenv/
+venv/
 
 # Created by https://www.gitignore.io/api/macos,django,python,jetbrains
 # Edit at https://www.gitignore.io/?templates=macos,django,python,jetbrains
