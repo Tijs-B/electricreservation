@@ -226,26 +226,22 @@ msgid "User settings"
 msgstr "Gebruikersinstellingen"
 
 #: reservation/views.py:40
-#, fuzzy
 #| msgid "Reservation saved successfully"
 msgid "User settings saved successfully."
 msgstr "Reservatie opgeslagen."
 
 #: reservation/views.py:84
-#, fuzzy
 #| msgid "Car saved successfully"
 msgid "Car saved successfully."
 msgstr "Auto opgeslagen."
 
 #: reservation/views.py:97 reservation/views.py:141 reservation/views.py:184
 #: reservation/views.py:226
-#, fuzzy
 #| msgid "Reservation saved successfully"
 msgid "Reservation saved successfully."
 msgstr "Reservatie opgeslagen."
 
 #: reservation/views.py:123 reservation/views.py:208
-#, fuzzy
 #| msgid "Reservation deleted successfully"
 msgid "Reservation deleted successfully."
 msgstr "Reservatie verwijderd."
