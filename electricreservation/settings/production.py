@@ -37,3 +37,6 @@ DATABASES = {
         'PORT': '',
     }
 }
+
+STATIC_URL = '/static/'
+STATIC_ROOT = '/var/www/vhosts/electricreservation/static/'
