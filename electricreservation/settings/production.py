@@ -29,8 +29,12 @@ ALLOWED_HOSTS = ['192.168.1.157', 'rpi-tijs.duckdns.org', 'raspberry']
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'electricreservation',
+        'USER': 'electricreservationuser',
+        'PASSWORD': get_env_var("POSTGRESQL_PASSWORD"),
+        'HOST': 'localhost',
+        'PORT': '',
     }
 }
 
