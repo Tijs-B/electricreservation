@@ -3,4 +3,3 @@ django-rest-framework
 django-crispy-forms
 python-dateutil
 psycopg2
-django-debug-toolbar
