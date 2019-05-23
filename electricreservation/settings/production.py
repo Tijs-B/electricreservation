@@ -74,3 +74,5 @@ MIDDLEWARE = [
     'django.middleware.cache.FetchFromCacheMiddleware',
 ]
 
+CONN_MAX_AGE = 60
+
