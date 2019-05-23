@@ -28,9 +28,12 @@ INSTALLED_APPS = [
     'reservation.apps.ReservationConfig',
     'rest_framework',
     'crispy_forms',
+    'debug_toolbar',
 ]
 
 MIDDLEWARE = [
+    'django.middleware.gzip.GZipMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
