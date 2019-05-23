@@ -4,7 +4,7 @@ from django.core.exceptions import ImproperlyConfigured
 
 from .base import *
 
-with open('/home/pi/.config/electricreservation/secret.json', 'r') as f:
+with open('/home/pi/.electricreservation_config/secret.json', 'r') as f:
     configs = json.loads(f.read())
 
 
