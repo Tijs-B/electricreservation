@@ -73,12 +73,14 @@
         flatpickr(input_start_time.get(0), {
             dateFormat: "d-m-Y H:i:S",
             enableTime: true,
+            time_24h: true,
             {#disableMobile: "true",#}
             defaultData: moment(input_start_time.val()).toISOString()
         });
         flatpickr(input_end_time.get(0), {
             dateFormat: "d-m-Y H:i:S",
             enableTime: true,
+            time_24h: true,
             {#disableMobile: "true",#}
             defaultData: moment(input_end_time.val()).toISOString()
         });
