@@ -22,7 +22,7 @@ def get_env_var(setting, configs=configs):
 
 
 SECRET_KEY = get_env_var("SECRET_KEY")
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['192.168.1.157', 'rpi-tijs.duckdns.org', 'raspberry']
 
@@ -40,3 +40,12 @@ DATABASES = {
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
+
+# Security settings
+SECURE_SSL_REDIRECT = True
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+SECURE_HSTS_SECONDS = 60 * 60 * 24 * 7  # 7 days
+SECURE_CONTENT_TYPE_NOSNIFF = True
+SECURE_BROWSER_XSS_FILTER = True
+
