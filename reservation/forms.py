@@ -188,7 +188,7 @@ class ChargingReservationDetailForm(forms.ModelForm):
 
 
 class UserConfigForm(forms.Form):
-    email = forms.EmailField(label=_("Email address"))
+    email = forms.EmailField(label=_("Email address"), required=False)
     phone_number = forms.CharField(label=_("Phone number"), max_length=12, required=False)
 
     calendar_color = forms.CharField(label=_("Calendar color"), max_length=7)
