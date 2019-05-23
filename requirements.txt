@@ -3,3 +3,5 @@ django-rest-framework
 django-crispy-forms
 python-dateutil
 psycopg2
+django-encrypted-model-fields
+requests

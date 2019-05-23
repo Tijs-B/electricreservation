@@ -22,6 +22,7 @@ def get_env_var(setting, configs=configs):
 
 
 SECRET_KEY = get_env_var("SECRET_KEY")
+FIELD_ENCRYPTION_KEY = get_env_var("FIELD_ENCRYPTION_KEY")
 DEBUG = False
 
 ALLOWED_HOSTS = ['electric-reservation.duckdns.org']
