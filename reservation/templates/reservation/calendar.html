@@ -119,9 +119,15 @@
                             <div class="col">
                                 <div class="ldBar label-center" id="live-data-progress-bar"
                                      data-value="0" data-preset="circle"></div>
+                                <h5 class="text-center" style="margin-top: 10px">
+                                    <span style="font-size: 1.2rem" id="live-data-remaining-range"></span> km
+                                </h5>
+                                <p class="text-center" style="margin-top: 20px">
+                                    <small id="live-data-last-update"></small>
+                                </p>
                             </div>
                             <div class="col">
-                                
+
                             </div>
                         </div>
                     </div>
@@ -373,9 +379,16 @@
                 type: 'get',
                 url: '/api/car/' + currentCarId + '/live_data/',
                 success: function (result) {
+                    console.log(result);
                     $("#live-data-spinner").hide();
-                    $("#live-data-progress-bar").attr("data-value", result['charge_level']);
+                    let bar = new ldBar("#live-data-progress-bar");
+                    bar.set(result['charge_level']);
 
+                    $("#live-data-last-update").text(
+                        "{% blocktrans %}Last update: %0{% endblocktrans %}"
+                            .format(moment(result['last_battery_status_update'].date).format('LLLL'))
+                    );
+                    $("#live-data-remaining-range").text(result['remaining_range']);
                     $("#live-data-modal-body").show();
                 }
             });
