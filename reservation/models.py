@@ -10,6 +10,7 @@ from django.db import models
 from django.db.models import ExpressionWrapper, F, DurationField, Sum, Q
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.utils import timezone
 from django.utils.translation import gettext as _
 from encrypted_model_fields.fields import EncryptedCharField
 
@@ -151,6 +152,7 @@ class RenaultServicesLink(models.Model):
     password = EncryptedCharField(max_length=100)
 
     token = models.TextField(blank=True)
+    xsrf_token = models.TextField(blank=True)
     refresh_token = models.TextField(blank=True)
     user_id = models.TextField(blank=True)
     vin = models.CharField(max_length=17)
@@ -159,6 +161,7 @@ class RenaultServicesLink(models.Model):
     UPDATE_INTERVAL = datetime.timedelta(minutes=15)
 
     charging = models.BooleanField(blank=True, null=True)
+    plugged = models.BooleanField(blank=True, null=True)
     charge_level = models.IntegerField(blank=True, null=True)
     remaining_range = models.FloatField(blank=True, null=True)
     last_battery_status_update = models.DateTimeField(blank=True, null=True)
@@ -172,12 +175,17 @@ class RenaultServicesLink(models.Model):
         payload = base64.b64decode(payload + '=' * (-len(payload) % 4))
         payload = json.loads(payload)
         exp = datetime.datetime.fromtimestamp(payload['exp'])
+        print(f"Token valid until {exp}")
         if datetime.datetime.now() > exp:
             return True
         else:
             return False
 
-    def __initialize_tokens(self):
+    def _get_headers(self):
+        return {'Authorization': 'Bearer ' + self.token,
+                'X-XSRF-Token': self.xsrf_token}
+
+    def _initialize_tokens(self):
         r = requests.post(
             'https://www.services.renault-ze.com/api/user/login',
             json={"username": self.username, "password": self.password}
@@ -187,38 +195,40 @@ class RenaultServicesLink(models.Model):
         result = r.json()
         self.token = result['token']
         self.xsrf_token = result['xsrfToken']
+        self.refresh_token = r.cookies['refreshToken']
         self.user_id = result['user']['id']
         self.vin = result['user']['vehicle_details']['VIN']
         self.save()
 
-    def __refresh_token(self):
-        if self.token_expired():
-            r = requests.post(
-                'https://www.services.renault-ze.com/api/user/token/refresh',
-                headers={'Authorization': 'Bearer ' + self.token,
-                         'X-XSRF-Token': self.xsrf_token},
-                json={'token': self.token}
-            )
-            if r.status_code != 200:
-                raise ConnectionError("Could not refresh token")
-            result = r.json()
-            self.token = result['token']
-            self.save()
+    def _refresh_token(self):
+        r = requests.post(
+            'https://www.services.renault-ze.com/api/user/token/refresh',
+            headers=self._get_headers(),
+            cookies={'refreshToken': self.refresh_token},
+            json={'token': self.token}
+        )
+        if r.status_code != 200:
+            raise ConnectionError("Could not refresh token")
+        result = r.json()
+        self.token = result['token']
+        self.refresh_token = r.cookies['refreshToken']
+        self.save()
 
-    def __update_battery_data(self):
+    def _update_battery_data(self):
         r = requests.get(
             'https://www.services.renault-ze.com/api/vehicle/' + self.vin + '/battery',
-            headers={'Authorization': 'Bearer ' + self.token}
+            headers=self._get_headers()
         )
         if r.status_code != 200:
             raise ConnectionError('Could not update battery data')
         result = r.json()
-        self.last_update = datetime.datetime.now()
+        self.last_update = timezone.now()
         self.charging = result['charging']
         self.plugged = result['plugged']
         self.charge_level = result['charge_level']
         self.remaining_range = result['remaining_range']
-        self.last_battery_status_update = datetime.datetime.fromtimestamp(result['last_update'])
+        self.last_battery_status_update = timezone.make_aware(
+            datetime.datetime.fromtimestamp(result['last_update'] / 1000))
 
         if result['plugged']:
             self.charging_point = result['charging_point']
@@ -228,17 +238,17 @@ class RenaultServicesLink(models.Model):
         if result['charging']:
             self.remaining_time = result['remaining_time']
         else:
-            self.charging = ''
+            self.remaining_time = None
 
         self.save()
 
     def update_battery_data(self):
         if self.last_update is None:
-            self.__initialize_tokens()
+            self._initialize_tokens()
         if self.token_expired():
-            self.__refresh_token()
-        if self.last_update is None or self.last_update < datetime.datetime.now() - self.UPDATE_INTERVAL:
-            self.__update_battery_data()
+            self._refresh_token()
+        if self.last_update is None or self.last_update < timezone.now() - self.UPDATE_INTERVAL:
+            self._update_battery_data()
 
 
 class Reservation(models.Model):

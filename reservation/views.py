@@ -18,7 +18,7 @@ from rest_framework import generics
 from reservation.forms import ReservationDetailForm, ReservationAddForm, ChargingReservationAddForm, \
     ChargingReservationDetailForm, UserConfigForm
 from reservation.models import Car, Reservation, ChargingReservation
-from reservation.serializers import ReservationSerializer, ChargingReservationSerializer
+from reservation.serializers import ReservationSerializer, ChargingReservationSerializer, RenaultServicesLinkSerializer
 
 
 def index(request):
@@ -258,6 +258,20 @@ class ChargingReservationAdd(LoginRequiredMixin, UserPassesTestMixin, SuccessMes
         context['car'] = self.car
         context['reservation_type'] = 'charging_reservation'
         return context
+
+
+class LiveData(LoginRequiredMixin, UserPassesTestMixin, SingleObjectMixin, View):
+    model = Car
+
+    def test_func(self):
+        car_id = self.get_object().id
+        return self.request.user.car_set.filter(pk=car_id).exists()
+
+    def get(self, request, *args, **kwargs):
+        link = self.get_object().renaultserviceslink
+        link.update_battery_data()
+        serializer = RenaultServicesLinkSerializer(link)
+        return JsonResponse(serializer.data)
 
 
 class DistanceLeft(LoginRequiredMixin, UserPassesTestMixin, SingleObjectMixin, View):

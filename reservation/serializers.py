@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
 
-from reservation.models import Reservation, Car, Profile, ChargingReservation
+from reservation.models import Reservation, Car, Profile, ChargingReservation, RenaultServicesLink
 
 
 class ProfileSerializer(serializers.ModelSerializer):
@@ -22,6 +22,13 @@ class CarSerializer(serializers.ModelSerializer):
     class Meta:
         model = Car
         fields = ('id', 'name', 'summer_driving_range', 'winter_driving_range', 'users', 'charging_time')
+
+
+class RenaultServicesLinkSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = RenaultServicesLink
+        fields = ('id', 'charging', 'plugged', 'charge_level', 'remaining_range', 'last_battery_status_update',
+                  'charging_point', 'remaining_time')
 
 
 class ReservationSerializer(serializers.ModelSerializer):

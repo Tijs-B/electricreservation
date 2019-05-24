@@ -28,6 +28,7 @@ urlpatterns = [
     path('api/car/<int:pk>/charging_reservations/', views.APIChargingReservationsList.as_view(),
          name='api_car_charging_reservations'),
     path('api/car/<int:pk>/distance_left/', views.DistanceLeft.as_view(), name='api_car_distance_left'),
+    path('api/car/<int:pk>/live_data/', views.LiveData.as_view(), name='api_car_live_data'),
 
     path('jsi18n/', JavaScriptCatalog.as_view(), name='javascript-catalog'),
 ]

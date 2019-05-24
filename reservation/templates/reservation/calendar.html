@@ -15,7 +15,17 @@
         }
 
         .fc-event {
-            cursor: pointer
+            cursor: pointer;
+        }
+
+        .ldBar-label {
+            font-size: 1.2em;
+        }
+
+        #live-data-progress-bar {
+            width: 200px;
+            height: 200px;
+            margin: auto
         }
     </style>
 
@@ -24,6 +34,8 @@
     <link rel="stylesheet" href="{% static 'reservation/fullcalendar/daygrid/main.min.css' %}">
     <link rel="stylesheet" href="{% static 'reservation/fullcalendar/timegrid/main.min.css' %}">
     <link rel="stylesheet" href="{% static 'reservation/fullcalendar/bootstrap/main.min.css' %}">
+
+    <link rel="stylesheet" href="{% static 'reservation/loading-bar/loading-bar.css' %}">
 {% endblock head %}
 
 {% block navbar %}
@@ -49,6 +61,7 @@
 {% endblock navbar %}
 
 {% block outer_body %}
+    {#    Add reservation modal#}
     <div class="modal fade" tabindex="-1" role="dialog" id="add-reservation-modal">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -87,6 +100,35 @@
             </div>
         </div>
     </div>
+
+    {#    Live data modal#}
+    <div class="modal fade" tabindex="-1" role="dialog" id="live-data-modal">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">{% blocktrans %}Live data{% endblocktrans %}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="{% trans "Close" %}">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    <i id="live-data-spinner" class="fas fa-circle-notch fa-spin"></i>
+                    <div id="live-data-modal-body">
+                        <div class="row">
+                            <div class="col">
+                                <div class="ldBar label-center" id="live-data-progress-bar"
+                                     data-value="0" data-preset="circle"></div>
+                            </div>
+                            <div class="col">
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock outer_body %}
 
 {% block body %}
@@ -100,6 +142,10 @@
             </h1>
         </div>
         <div class="float-right" style="margin-right: 10px">
+            <button class="btn btn-outline-dark" onclick="openLiveData()">
+                <i class="fas fa-circle" style="color: red"></i>
+                {% blocktrans %}Live data{% endblocktrans %}
+            </button>
             <button class="btn btn-primary" onclick="calendar.today()" data-toggle="tooltip" data-placement="top"
                     title="{% trans "Today" %}">
                 <i class="fas fa-calendar"></i>
@@ -126,6 +172,8 @@
     <script src="{% static 'reservation/fullcalendar/daygrid/main.min.js' %}"></script>
     <script src="{% static 'reservation/fullcalendar/timegrid/main.min.js' %}"></script>
     <script src="{% static 'reservation/fullcalendar/bootstrap/main.min.js' %}"></script>
+
+    <script src="{% static 'reservation/loading-bar/loading-bar.js' %}"></script>
 
     <script>
 
@@ -197,7 +245,7 @@
                 });
             },
 
-            eventDrop: function(eventDropInfo) {
+            eventDrop: function (eventDropInfo) {
                 let newEvent = eventDropInfo.event;
                 $.ajax('/charging_reservation/' + newEvent.id + '/', {
                     method: 'post',
@@ -205,15 +253,15 @@
                         'start_time': moment(newEvent.start).format('YYYY-MM-DD HH:mm:ss'),
                         'end_time': moment(newEvent.end).format('YYYY-MM-DD HH:mm:ss'),
                     },
-                    error: function(xhr) {
+                    error: function (xhr) {
                         alert("{% trans 'Moving charging reservation failed: ' %}" + xhr.response);
                     }
                 })
             },
 
-            eventRender: function(info) {
+            eventRender: function (info) {
                 if (info.event.extendedProps.type === 'reservation') {
-                    if (! info.event.extendedProps.enoughDistanceLeft) {
+                    if (!info.event.extendedProps.enoughDistanceLeft) {
                         let oldBackgroundColor = info.el.style.backgroundColor;
                         let lightBackgroundColor = chroma(oldBackgroundColor).brighten(0.5).hex();
                         info.el.style.background = 'repeating-linear-gradient(' +
@@ -314,6 +362,24 @@
 
         let calendar = new FullCalendar.Calendar(calendarEl, calendarOptions);
         calendar.render();
+
+        function openLiveData() {
+            $("#live-data-spinner").show();
+            $("#live-data-modal-body").hide();
+            $("#live-data-modal").modal('show');
+
+            $.ajax({
+                dataType: 'json',
+                type: 'get',
+                url: '/api/car/' + currentCarId + '/live_data/',
+                success: function (result) {
+                    $("#live-data-spinner").hide();
+                    $("#live-data-progress-bar").attr("data-value", result['charge_level']);
+
+                    $("#live-data-modal-body").show();
+                }
+            });
+        }
 
     </script>
 {% endblock script %}

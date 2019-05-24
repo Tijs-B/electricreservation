@@ -261,3 +261,7 @@ msgstr "Terug naar hoofdmenu"
 
 #~ msgid "Not enough power left"
 #~ msgstr "Niet genoeg batterij meer"
+
+#: reservation/templates/reservation/calendar.html:122
+msgid "Live data"
+msgstr ""
