@@ -27,8 +27,8 @@ class CarSerializer(serializers.ModelSerializer):
 class RenaultServicesLinkSerializer(serializers.ModelSerializer):
     class Meta:
         model = RenaultServicesLink
-        fields = ('id', 'charging', 'plugged', 'charge_level', 'remaining_range', 'last_battery_status_update',
-                  'charging_point', 'remaining_time')
+        fields = ('id', 'last_update', 'charging', 'plugged', 'charge_level', 'remaining_range',
+                  'last_battery_status_update', 'charging_point', 'remaining_time')
 
 
 class ReservationSerializer(serializers.ModelSerializer):
