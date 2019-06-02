@@ -17,6 +17,14 @@
         .fc-event {
             cursor: pointer
         }
+
+        .fc-sat {
+            background-color: #f3f3f3;
+        }
+
+        .fc-sun {
+            background-color: #f3f3f3;
+        }
     </style>
 
     <!-- FullCalendar -->
@@ -228,15 +236,6 @@
             },
 
             eventSources: [
-                function (info, successCallback, failureCallback) {
-                    successCallback([{
-                        daysOfWeek: [0, 6], //Sundays and saturdays
-                        rendering: "background",
-                        color: "#d5d5d5",
-                        overLap: false,
-                        allDay: true
-                    }])
-                },
                 function (info, successCallback, failureCallback) {
                     $.ajax({
                         dataType: 'json',
