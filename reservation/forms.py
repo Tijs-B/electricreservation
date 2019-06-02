@@ -23,7 +23,7 @@ class ReservationAddForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
 
         self.helper = FormHelper()
-        self.helper.add_input(Submit('submit', 'Create'))
+        self.helper.add_input(Submit('submit', _('Create')))
 
     def save(self, commit=True):
         instance = super().save(commit=False)

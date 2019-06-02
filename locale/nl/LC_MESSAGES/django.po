@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-05-23 00:43+0200\n"
+"POT-Creation-Date: 2019-06-02 10:04+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,6 +17,10 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: reservation/forms.py:26 reservation/forms.py:124
+msgid "Create"
+msgstr "Creëren"
 
 #: reservation/forms.py:42 reservation/forms.py:88 reservation/forms.py:139
 #: reservation/forms.py:177
@@ -44,10 +48,6 @@ msgstr "Update"
 #: reservation/templates/reservation/reservation_detail.html:46
 msgid "Delete"
 msgstr "Verwijder"
-
-#: reservation/forms.py:124
-msgid "Create"
-msgstr "Creëren"
 
 #: reservation/forms.py:148 reservation/forms.py:186
 #, python-format
@@ -131,29 +131,29 @@ msgstr "Prioriteit"
 msgid "Electric Reservation"
 msgstr "Electric Reservation"
 
-#: reservation/templates/reservation/base.html:49
+#: reservation/templates/reservation/base.html:55
 msgid "Settings"
 msgstr "Instellingen"
 
-#: reservation/templates/reservation/base.html:50
+#: reservation/templates/reservation/base.html:56
 #: templates/registration/password_change_form.html:9
 msgid "Change password"
 msgstr "Wachtwoord wijzigen"
 
-#: reservation/templates/reservation/base.html:53
+#: reservation/templates/reservation/base.html:59
 msgid "Logout"
 msgstr "Uitloggen"
 
-#: reservation/templates/reservation/calendar.html:56
+#: reservation/templates/reservation/calendar.html:64
 msgid "Add reservation"
 msgstr "Reservatie toevoegen"
 
-#: reservation/templates/reservation/calendar.html:57
+#: reservation/templates/reservation/calendar.html:65
 #: reservation/templates/reservation/reservation_detail.html:29
 msgid "Close"
 msgstr "Sluiten"
 
-#: reservation/templates/reservation/calendar.html:65
+#: reservation/templates/reservation/calendar.html:73
 msgid ""
 "The car has <b><span id=\"add-reservation-modal-distance\"></span> km</b> "
 "left on"
@@ -161,32 +161,32 @@ msgstr ""
 "De auto kan nog <b><span id=\"add-reservation-modal-distance\"></span> km</"
 "b> rijden op"
 
-#: reservation/templates/reservation/calendar.html:73
+#: reservation/templates/reservation/calendar.html:81
 #: reservation/templates/reservation/reservation_detail.html:37
 msgid "Cancel"
 msgstr "Annuleer"
 
-#: reservation/templates/reservation/calendar.html:80
+#: reservation/templates/reservation/calendar.html:88
 msgid "Charge"
 msgstr "Opladen"
 
-#: reservation/templates/reservation/calendar.html:84
+#: reservation/templates/reservation/calendar.html:92
 msgid "Book"
 msgstr "Reserveren"
 
-#: reservation/templates/reservation/calendar.html:104
+#: reservation/templates/reservation/calendar.html:112
 msgid "Today"
 msgstr "Vandaag"
 
-#: reservation/templates/reservation/calendar.html:108
+#: reservation/templates/reservation/calendar.html:116
 msgid "Previous"
 msgstr "Vorige"
 
-#: reservation/templates/reservation/calendar.html:112
+#: reservation/templates/reservation/calendar.html:120
 msgid "Next"
 msgstr "Volgende"
 
-#: reservation/templates/reservation/calendar.html:209
+#: reservation/templates/reservation/calendar.html:217
 msgid "Moving charging reservation failed: "
 msgstr "Oplading verplaatsen mislukt: "
 
@@ -215,13 +215,13 @@ msgstr "Bevestig verwijderen"
 msgid "Are you sure you want to delete this reservation?"
 msgstr "Ben je zeker dat je deze reservatie wil verwijderen?"
 
-#: reservation/templates/reservation/reservation_detail.html:105
-#: reservation/templates/reservation/reservation_detail.html:109
+#: reservation/templates/reservation/reservation_detail.html:111
+#: reservation/templates/reservation/reservation_detail.html:115
 #, python-format
 msgid "Warning! Just <b>%%0 km</b> left at %%1."
 msgstr "Opgelet! De auto kan nog maar <b>%%0 km</b> rijden op %%1."
 
-#: reservation/templates/reservation/reservation_detail.html:113
+#: reservation/templates/reservation/reservation_detail.html:119
 #, python-format
 msgid "The car has <b>%%0 km</b> left at %%1."
 msgstr "De auto kan nog <b>%%0 km</b> rijden op %%1."
