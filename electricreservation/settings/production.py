@@ -73,3 +73,5 @@ MIDDLEWARE = [
 
 CONN_MAX_AGE = 60
 
+STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.CachedStaticFilesStorage'
+
