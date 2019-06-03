@@ -10,29 +10,6 @@ from django.dispatch import receiver
 from django.utils.translation import gettext as _
 
 
-class Profile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    calendar_color = models.CharField(_("Calendar color"), max_length=7, default='#0275d8')
-
-    phone_regex = RegexValidator(regex=r'^\+\d{11}$',
-                                 message=_("Phone number must be entered in the format: '+32496123456'"))
-    phone_number = models.CharField(_("Phone number"), validators=[phone_regex], max_length=12, blank=True)
-
-    def __str__(self):
-        return f"Profile for {self.user}"
-
-
-@receiver(post_save, sender=User)
-def create_user_profile(sender, instance, created, **kwargs):
-    if created:
-        Profile.objects.create(user=instance)
-
-
-@receiver(post_save, sender=User)
-def save_user_profile(sender, instance, **kwargs):
-    instance.profile.save()
-
-
 class Car(models.Model):
     name = models.CharField(_("Name"), max_length=200)
 
@@ -188,3 +165,36 @@ class ChargingReservation(models.Model):
             models.Index(fields=['start_time']),
             models.Index(fields=['end_time']),
         ]
+
+
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    calendar_color = models.CharField(_("Calendar color"), max_length=7, default='#0275d8')
+
+    phone_regex = RegexValidator(regex=r'^\+\d{11}$',
+                                 message=_("Phone number must be entered in the format: '+32496123456'"))
+    phone_number = models.CharField(_("Phone number"), validators=[phone_regex], max_length=12, blank=True)
+
+    last_car = models.ForeignKey(Car, on_delete=models.SET_NULL, blank=True, null=True)
+
+    def __str__(self):
+        return f"Profile for {self.user}"
+
+    def get_chosen_car(self):
+        if self.last_car:
+            return self.last_car
+        else:
+            new_last_car = self.user.car_set.first()
+            self.last_car = new_last_car
+            return new_last_car
+
+
+@receiver(post_save, sender=User)
+def create_user_profile(sender, instance, created, **kwargs):
+    if created:
+        Profile.objects.create(user=instance)
+
+
+@receiver(post_save, sender=User)
+def save_user_profile(sender, instance, **kwargs):
+    instance.profile.save()

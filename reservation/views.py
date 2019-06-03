@@ -23,15 +23,9 @@ from reservation.serializers import ReservationSerializer, ChargingReservationSe
 
 def index(request):
     if request.user.is_authenticated:
-        return redirect('reservation:calendar')
+        return redirect('reservation:calendar_car', pk=request.user.profile.get_chosen_car().id)
     else:
         return redirect('login')
-
-
-@login_required
-def calendar(request):
-    default_car = Car.objects.filter(users__in=[request.user]).first()
-    return redirect('reservation:calendar_car', pk=default_car.id)
 
 
 class UserSettings(LoginRequiredMixin, SuccessMessageMixin, FormView):
@@ -40,7 +34,7 @@ class UserSettings(LoginRequiredMixin, SuccessMessageMixin, FormView):
     success_message = _('User settings saved successfully.')
 
     def get_success_url(self):
-        return reverse('reservation:calendar')
+        return reverse('reservation:calendar_car', kwargs={'pk': self.request.user.profile.get_chosen_car().id})
 
     def get_initial(self):
         initial = super().get_initial()
@@ -75,6 +69,12 @@ class CalendarCar(LoginRequiredMixin, UserPassesTestMixin, DetailView):
         context = super().get_context_data(**kwargs)
         context['all_cars'] = self.request.user.car_set.all()
         return context
+
+    def get(self, *args, **kwargs):
+        response = super().get(*args, **kwargs)
+        self.request.user.profile.last_car = self.get_object()
+        self.request.user.profile.save()
+        return response
 
 
 class CarConfig(LoginRequiredMixin, UserPassesTestMixin, SuccessMessageMixin, UpdateView):

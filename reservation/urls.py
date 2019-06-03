@@ -7,7 +7,6 @@ app_name='reservation'
 urlpatterns = [
     path('', views.index, name='index'),
 
-    path('calendar/', views.calendar, name='calendar'),
     path('calendar/<int:pk>/', views.CalendarCar.as_view(), name='calendar_car'),
     path('calendar/<int:pk>/config/', views.CarConfig.as_view(), name='calendar_car_config'),
 
