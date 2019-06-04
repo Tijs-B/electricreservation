@@ -1,0 +1,19 @@
+{% extends 'reservation/base.html' %}
+
+
+{% block body %}
+    <h1 class="mt-4">Raspberry Pi Config</h1>
+
+    <h4 class="mt-4">Set audio output</h4>
+    <ul class="nav nav-pills">
+        <li class="nav-item">
+            <a class="nav-link {% if current_audio_output == 'jack' %}active{% endif %}"
+               href="{% url 'reservation:raspi_config_set_audio_jack' %}">AUX</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {% if current_audio_output == 'hdmi' %}active{% endif %}"
+               href="{% url 'reservation:raspi_config_set_audio_hdmi' %}">HDMI</a>
+        </li>
+    </ul>
+{% endblock %}
+
