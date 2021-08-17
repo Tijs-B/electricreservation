@@ -1,7 +1,6 @@
 from django.urls import path
 
 from . import views
-from . import raspi_config_views
 
 app_name='reservation'
 urlpatterns = [
@@ -27,10 +26,4 @@ urlpatterns = [
     path('api/car/<int:pk>/charging_reservations/', views.APIChargingReservationsList.as_view(),
          name='api_car_charging_reservations'),
     path('api/car/<int:pk>/distance_left/', views.DistanceLeft.as_view(), name='api_car_distance_left'),
-
-
-    path('raspi-config/', raspi_config_views.RaspiConfig.as_view(), name='raspi_config'),
-    path('raspi-config/set-audio-jack/', raspi_config_views.SetAudioJack.as_view(), name='raspi_config_set_audio_jack'),
-    path('raspi-config/set-audio-hdmi/', raspi_config_views.SetAudioHDMI.as_view(), name='raspi_config_set_audio_hdmi'),
-
 ]
